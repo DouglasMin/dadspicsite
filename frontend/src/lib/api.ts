@@ -72,7 +72,7 @@ class ApiClient {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Unknown error' }));
+      const error = await response.json().catch(() => ({ message: '알 수 없는 오류' }));
       throw new Error(error.message || `HTTP ${response.status}`);
     }
 
@@ -167,7 +167,7 @@ class ApiClient {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Upload failed' }));
+      const error = await response.json().catch(() => ({ message: '업로드 실패' }));
       throw new Error(error.message || `HTTP ${response.status}`);
     }
 

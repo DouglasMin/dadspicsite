@@ -17,7 +17,7 @@ function App() {
           <Route path="exhibitions" element={<Exhibitions />} />
           <Route path="contact" element={<Contact />} />
           {/* Admin route will be added later */}
-          <Route path="admin" element={<div className="container mx-auto px-4 py-20 text-center">Admin dashboard coming soon</div>} />
+          <Route path="admin" element={<div className="container mx-auto px-4 py-20 text-center">관리자 대시보드 준비 중입니다</div>} />
         </Route>
       </Routes>
     </BrowserRouter>
