@@ -1,3 +1,6 @@
+# Claude Code
+.claude/
+
 # Dependencies
 node_modules/
 .pnp
@@ -25,26 +28,32 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+.vscode/
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*.swp
+*.swo
 
 # Terraform
-terraform/.terraform/
-terraform/.terraform.lock.hcl
-terraform/terraform.tfstate
-terraform/terraform.tfstate.backup
-terraform/*.tfvars
+**/.terraform/
+**/.terraform.lock.hcl
+**/terraform.tfstate
+**/terraform.tfstate.backup
+**/terraform.tfvars
 !terraform/*.tfvars.example
 
 # AWS
 .aws-sam/
+samconfig.toml
 
 # Lambda
 backend/**/*.zip
+
+# Misc
+*.log
+.cache/
