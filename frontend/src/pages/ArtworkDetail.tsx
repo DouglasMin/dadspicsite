@@ -84,7 +84,7 @@ export function ArtworkDetail() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Details</CardTitle>
+                <CardTitle>세부사항</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex justify-between">
