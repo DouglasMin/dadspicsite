@@ -6,16 +6,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 export function Gallery() {
   const [artworks, setArtworks] = useState<Artwork[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchArtworks = async () => {
       try {
         const data = await api.getArtworks();
-        setArtworks(data);
+        setArtworks(Array.isArray(data) ? data : []);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load artworks');
+        console.error('Failed to fetch artworks:', err);
+        setArtworks([]);
       } finally {
         setLoading(false);
       }
@@ -28,14 +28,6 @@ export function Gallery() {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
         <p className="text-lg text-muted-foreground">Loading gallery...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-20 text-center">
-        <p className="text-lg text-destructive">Error: {error}</p>
       </div>
     );
   }

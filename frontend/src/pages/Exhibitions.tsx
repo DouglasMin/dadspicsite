@@ -5,19 +5,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 export function Exhibitions() {
   const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchExhibitions = async () => {
       try {
         const data = await api.getExhibitions();
-        // Sort by start date (newest first)
-        const sorted = data.sort((a, b) =>
-          new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-        );
-        setExhibitions(sorted);
+        if (Array.isArray(data)) {
+          // Sort by start date (newest first)
+          const sorted = data.sort((a, b) =>
+            new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+          );
+          setExhibitions(sorted);
+        } else {
+          setExhibitions([]);
+        }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load exhibitions');
+        console.error('Failed to fetch exhibitions:', err);
+        setExhibitions([]);
       } finally {
         setLoading(false);
       }
@@ -36,14 +40,6 @@ export function Exhibitions() {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
         <p className="text-lg text-muted-foreground">Loading exhibitions...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-20 text-center">
-        <p className="text-lg text-destructive">Error: {error}</p>
       </div>
     );
   }
