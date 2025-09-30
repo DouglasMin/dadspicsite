@@ -1,0 +1,4 @@
+aws_region           = "ap-northeast-2"
+environment          = "dev"
+cors_allowed_origins = ["*"]
+lambda_image_uri     = "" # Will be populated after first ECR push
