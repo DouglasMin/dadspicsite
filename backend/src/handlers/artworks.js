@@ -22,11 +22,11 @@ export const handler = async (event) => {
         return await createArtwork(body);
 
       case 'PUT':
-        if (!id) return badRequest('Artwork ID is required');
+        if (!id) return badRequest('Artwork ID is required!');
         return await updateArtwork(id, body);
 
       case 'DELETE':
-        if (!id) return badRequest('Artwork ID is required');
+        if (!id) return badRequest('Artwork ID is required!');
         return await deleteArtwork(id);
 
       default:
