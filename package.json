@@ -1,0 +1,22 @@
+{
+  "name": "dadspicsite",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DouglasMin/dadspicsite.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DouglasMin/dadspicsite/issues"
+  },
+  "homepage": "https://github.com/DouglasMin/dadspicsite#readme",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.55.1",
+    "@types/node": "^24.6.1"
+  }
+}

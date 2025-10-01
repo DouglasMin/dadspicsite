@@ -76,7 +76,12 @@ class ApiClient {
       throw new Error(error.message || `HTTP ${response.status}`);
     }
 
-    return response.json();
+    // Handle empty responses (like DELETE)
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return response.json();
+    }
+    return {} as T;
   }
 
   // Health check

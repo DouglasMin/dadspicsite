@@ -7,6 +7,8 @@ import { Exhibitions } from '@/pages/Exhibitions';
 import { Contact } from '@/pages/Contact';
 import { Login } from '@/pages/Login';
 import { Admin } from '@/pages/Admin';
+import { ArtworkManagement } from '@/pages/ArtworkManagement';
+import { ExhibitionManagement } from '@/pages/ExhibitionManagement';
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
         {/* Auth routes without Layout */}
         <Route path="login" element={<Login />} />
         <Route path="admin" element={<Admin />} />
+        <Route path="admin/artworks" element={<ArtworkManagement />} />
+        <Route path="admin/exhibitions" element={<ExhibitionManagement />} />
       </Routes>
     </BrowserRouter>
   );

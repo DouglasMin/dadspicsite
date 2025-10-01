@@ -57,3 +57,10 @@ backend/**/*.zip
 # Misc
 *.log
 .cache/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
