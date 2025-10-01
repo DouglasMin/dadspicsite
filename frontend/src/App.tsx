@@ -5,6 +5,8 @@ import { Gallery } from '@/pages/Gallery';
 import { ArtworkDetail } from '@/pages/ArtworkDetail';
 import { Exhibitions } from '@/pages/Exhibitions';
 import { Contact } from '@/pages/Contact';
+import { Login } from '@/pages/Login';
+import { Admin } from '@/pages/Admin';
 
 function App() {
   return (
@@ -16,9 +18,10 @@ function App() {
           <Route path="artwork/:id" element={<ArtworkDetail />} />
           <Route path="exhibitions" element={<Exhibitions />} />
           <Route path="contact" element={<Contact />} />
-          {/* Admin route will be added later */}
-          <Route path="admin" element={<div className="container mx-auto px-4 py-20 text-center">관리자 대시보드 준비 중입니다</div>} />
         </Route>
+        {/* Auth routes without Layout */}
+        <Route path="login" element={<Login />} />
+        <Route path="admin" element={<Admin />} />
       </Routes>
     </BrowserRouter>
   );
