@@ -146,7 +146,7 @@ export const completeNewPassword = (
 };
 
 export const signOut = (): void => {
-  clearSessionTimer(); // 세션 타이머 정리
+  clearSessionTimer(); // 세션 타이머 정리!!!!!!!
   localStorage.removeItem(SESSION_KEY); // 세션 타임스탬프 제거
 
   const cognitoUser = userPool.getCurrentUser();
