@@ -153,28 +153,43 @@ class ApiClient {
     });
   }
 
-  // Image upload
-  async uploadImage(file: File): Promise<{ imageUrl: string }> {
-    const formData = new FormData();
-    formData.append('image', file);
-
-    const headers: HeadersInit = {};
-    if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
-    }
-
-    const response = await fetch(`${this.baseUrl}/upload`, {
+  // Get presigned URL for image upload
+  async getPresignedUrl(fileName: string, fileType: string, fileSize: number): Promise<{ presignedUrl: string; imageUrl: string; key: string }> {
+    return this.request('/upload', {
       method: 'POST',
-      headers,
-      body: formData,
+      body: JSON.stringify({ fileName, fileType, fileSize }),
+    });
+  }
+
+  // Upload image directly to S3 using presigned URL
+  async uploadImageToS3(presignedUrl: string, file: File): Promise<void> {
+    const response = await fetch(presignedUrl, {
+      method: 'PUT',
+      body: file,
+      headers: {
+        'Content-Type': file.type,
+      },
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: '업로드 실패' }));
-      throw new Error(error.message || `HTTP ${response.status}`);
+      throw new Error(`S3 upload failed: ${response.status} ${response.statusText}`);
     }
+  }
 
-    return response.json();
+  // Complete image upload process
+  async uploadImage(file: File): Promise<{ imageUrl: string }> {
+    // Step 1: Get presigned URL
+    const { presignedUrl, imageUrl } = await this.getPresignedUrl(
+      file.name,
+      file.type,
+      file.size
+    );
+
+    // Step 2: Upload directly to S3
+    await this.uploadImageToS3(presignedUrl, file);
+
+    // Step 3: Return the final image URL
+    return { imageUrl };
   }
 }
 

@@ -2,12 +2,24 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api, type Artwork } from '@/lib/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Image as ImageIcon, Eye } from 'lucide-react';
+import FsLightbox from 'fslightbox-react';
 
 export function Gallery() {
   const [artworks, setArtworks] = useState<Artwork[]>([]);
   const [loading, setLoading] = useState(true);
+  const [lightboxController, setLightboxController] = useState({
+    toggler: false,
+    slide: 1
+  });
   const navigate = useNavigate();
+
+  const openLightboxOnSlide = (number: number) => {
+    setLightboxController({
+      toggler: !lightboxController.toggler,
+      slide: number
+    });
+  };
 
   useEffect(() => {
     const fetchArtworks = async () => {
@@ -35,78 +47,102 @@ export function Gallery() {
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Page Header */}
-      <section className="border-b bg-muted/30">
-        <div className="container mx-auto px-4 lg:px-6 py-16 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            아트 갤러리
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            엄선된 현대미술 작품 컬렉션을 만나보세요. 각 작품은 고유한 이야기를 담고 있습니다.
-          </p>
+    <div className="min-h-screen bg-white">
+      {/* Page Header - Minimal */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-6 lg:px-12">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="mb-8">
+              <div className="w-16 h-px bg-neutral-300 mx-auto mb-8" />
+              <h1 className="text-5xl md:text-6xl font-light text-neutral-900 tracking-tight mb-6">
+                Gallery
+              </h1>
+              <p className="text-lg text-neutral-600 font-light leading-relaxed max-w-2xl mx-auto">
+                현대미술의 다양한 시각과 감성을 담은 작품들을 만나보세요.<br />
+                각 작품이 전하는 고유한 이야기를 발견해보세요.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Gallery Grid */}
-      <section className="py-12">
-        <div className="container mx-auto px-4 lg:px-6">
+      {/* Gallery Grid - Minimal Style */}
+      <section className="pb-24">
+        <div className="container mx-auto px-6 lg:px-12">
           {artworks.length === 0 ? (
-            <div className="text-center py-20">
-              <ImageIcon className="size-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <p className="text-xl text-muted-foreground mb-2">아직 등록된 작품이 없습니다</p>
-              <p className="text-sm text-muted-foreground">
-                곧 새로운 작품이 추가될 예정이니 다시 방문해 주세요
+            <div className="text-center py-32">
+              <div className="w-16 h-16 border border-neutral-200 rounded-full flex items-center justify-center mx-auto mb-8">
+                <ImageIcon className="size-6 text-neutral-400" />
+              </div>
+              <p className="text-xl font-light text-neutral-600 mb-4">Coming Soon</p>
+              <p className="text-sm text-neutral-400 font-light">
+                새로운 작품들이 곧 공개될 예정입니다
               </p>
             </div>
           ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {artworks.map((artwork) => (
-                <Card
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+              {artworks.map((artwork, index) => (
+                <div
                   key={artwork.id}
-                  className="group cursor-pointer hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 hover:border-primary/50 overflow-hidden"
-                  onClick={() => navigate(`/artwork/${artwork.id}`)}
+                  className="group"
                 >
                   {/* Image Container */}
                   {artwork.imageUrl ? (
-                    <div className="relative aspect-[3/4] overflow-hidden bg-muted">
+                    <div className="relative aspect-[3/4] overflow-hidden bg-neutral-100 mb-6">
                       <img
                         src={artwork.imageUrl}
                         alt={artwork.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
-                      {/* Overlay on hover */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-
+                      
+                      {/* Subtle overlay */}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-500" />
+                      
+                      {/* Action button */}
+                      <button
+                        onClick={() => openLightboxOnSlide(index + 1)}
+                        className="absolute top-4 right-4 w-10 h-10 bg-white/90 hover:bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center"
+                        title="확대 보기"
+                      >
+                        <Eye className="size-4 text-neutral-700" />
+                      </button>
                     </div>
                   ) : (
-                    <div className="aspect-[3/4] bg-muted flex items-center justify-center">
-                      <ImageIcon className="size-16 text-muted-foreground opacity-30" />
+                    <div className="aspect-[3/4] bg-neutral-100 flex items-center justify-center mb-6">
+                      <ImageIcon className="size-12 text-neutral-300" />
                     </div>
                   )}
 
                   {/* Content */}
-                  <CardHeader className="space-y-2">
-                    <CardTitle className="text-lg leading-tight line-clamp-1 group-hover:text-primary transition-colors">
+                  <div className="space-y-3">
+                    <h3 
+                      className="text-lg font-light text-neutral-900 tracking-wide cursor-pointer hover:text-neutral-600 transition-colors"
+                      onClick={() => navigate(`/artwork/${artwork.id}`)}
+                    >
                       {artwork.title}
-                    </CardTitle>
-                    <CardDescription className="text-sm">
-                      {artwork.year} • {artwork.medium}
-                    </CardDescription>
-                  </CardHeader>
-
-                  <CardContent className="pt-0">
-                    <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                    </h3>
+                    <div className="flex items-center gap-3 text-sm text-neutral-500 font-light">
+                      <span>{artwork.year}</span>
+                      <div className="w-px h-3 bg-neutral-300" />
+                      <span>{artwork.medium}</span>
+                    </div>
+                    <p className="text-sm text-neutral-600 font-light leading-relaxed line-clamp-2">
                       {artwork.description}
                     </p>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))}
             </div>
           )}
         </div>
       </section>
+
+      {/* Lightbox */}
+      <FsLightbox
+        toggler={lightboxController.toggler}
+        sources={artworks.filter(artwork => artwork.imageUrl).map(artwork => artwork.imageUrl)}
+        slide={lightboxController.slide}
+      />
     </div>
   );
 }

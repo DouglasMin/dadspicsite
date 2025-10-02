@@ -55,14 +55,22 @@ export function Exhibitions() {
   );
 
   return (
-    <div className="min-h-screen">
-      {/* Page Header */}
-      <section className="border-b bg-muted/30">
-        <div className="container mx-auto px-4 lg:px-6 py-16 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">전시회</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            현대미술 작품을 선보이는 현재 및 예정된 전시회를 만나보세요
-          </p>
+    <div className="min-h-screen bg-white">
+      {/* Page Header - Minimal */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-6 lg:px-12">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="mb-8">
+              <div className="w-16 h-px bg-neutral-300 mx-auto mb-8" />
+              <h1 className="text-5xl md:text-6xl font-light text-neutral-900 tracking-tight mb-6">
+                Exhibitions
+              </h1>
+              <p className="text-lg text-neutral-600 font-light leading-relaxed max-w-2xl mx-auto">
+                현재 진행 중인 전시회와 예정된 전시 일정을 확인하세요.<br />
+                각 전시회는 독특한 주제와 작품들로 구성되어 있습니다.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -70,11 +78,13 @@ export function Exhibitions() {
       <section className="py-12">
         <div className="container mx-auto px-4 lg:px-6">
           {exhibitions.length === 0 ? (
-            <div className="text-center py-20">
-              <Calendar className="size-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <p className="text-xl text-muted-foreground mb-2">아직 예정된 전시회가 없습니다</p>
-              <p className="text-sm text-muted-foreground">
-                곧 있을 전시회 소식을 위해 다시 방문해 주세요
+            <div className="text-center py-32">
+              <div className="w-16 h-16 border border-neutral-200 rounded-full flex items-center justify-center mx-auto mb-8">
+                <Calendar className="size-6 text-neutral-400" />
+              </div>
+              <p className="text-xl font-light text-neutral-600 mb-4">Coming Soon</p>
+              <p className="text-sm text-neutral-400 font-light">
+                새로운 전시회가 곧 공개될 예정입니다
               </p>
             </div>
           ) : (
@@ -82,16 +92,17 @@ export function Exhibitions() {
               {/* Now Showing */}
               {ongoingExhibitions.length > 0 && (
                 <div>
-                  <div className="flex items-center gap-3 mb-8">
-                    <div className="h-px flex-1 bg-border" />
-                    <h2 className="text-2xl font-bold flex items-center gap-2">
-                      <Clock className="size-6 text-primary" />
-                      현재 전시중
-                    </h2>
-                    <div className="h-px flex-1 bg-border" />
+                  <div className="mb-12">
+                    <div className="flex items-center gap-8 mb-8">
+                      <div className="w-12 h-px bg-neutral-300" />
+                      <h2 className="text-2xl md:text-3xl font-light text-neutral-900 tracking-wide">
+                        Now Showing
+                      </h2>
+                      <div className="flex-1 h-px bg-neutral-300" />
+                    </div>
                   </div>
 
-                  <div className="space-y-8">
+                  <div className="space-y-16">
                     {ongoingExhibitions.map((exhibition) => (
                       <ExhibitionCard
                         key={exhibition.id}
@@ -106,16 +117,17 @@ export function Exhibitions() {
               {/* Upcoming */}
               {upcomingExhibitions.length > 0 && (
                 <div>
-                  <div className="flex items-center gap-3 mb-8">
-                    <div className="h-px flex-1 bg-border" />
-                    <h2 className="text-2xl font-bold flex items-center gap-2">
-                      <Calendar className="size-6 text-primary" />
-                      예정된 전시회
-                    </h2>
-                    <div className="h-px flex-1 bg-border" />
+                  <div className="mb-12">
+                    <div className="flex items-center gap-8 mb-8">
+                      <div className="w-12 h-px bg-neutral-300" />
+                      <h2 className="text-2xl md:text-3xl font-light text-neutral-900 tracking-wide">
+                        Upcoming
+                      </h2>
+                      <div className="flex-1 h-px bg-neutral-300" />
+                    </div>
                   </div>
 
-                  <div className="space-y-8">
+                  <div className="space-y-16">
                     {upcomingExhibitions.map((exhibition) => (
                       <ExhibitionCard
                         key={exhibition.id}
@@ -130,15 +142,17 @@ export function Exhibitions() {
               {/* Past Exhibitions */}
               {pastExhibitions.length > 0 && (
                 <div>
-                  <div className="flex items-center gap-3 mb-8">
-                    <div className="h-px flex-1 bg-border" />
-                    <h2 className="text-2xl font-bold text-muted-foreground">
-                      지난 전시회
-                    </h2>
-                    <div className="h-px flex-1 bg-border" />
+                  <div className="mb-12">
+                    <div className="flex items-center gap-8 mb-8">
+                      <div className="w-12 h-px bg-neutral-300" />
+                      <h2 className="text-2xl md:text-3xl font-light text-neutral-500 tracking-wide">
+                        Past Exhibitions
+                      </h2>
+                      <div className="flex-1 h-px bg-neutral-300" />
+                    </div>
                   </div>
 
-                  <div className="space-y-8">
+                  <div className="space-y-16">
                     {pastExhibitions.map((exhibition) => (
                       <ExhibitionCard
                         key={exhibition.id}
@@ -165,90 +179,107 @@ function ExhibitionCard({
   status: 'ongoing' | 'upcoming' | 'past';
 }) {
   return (
-    <Card
-      className={`border-2 overflow-hidden transition-all duration-300 ${
-        status === 'ongoing'
-          ? 'border-primary/50 shadow-lg'
-          : status === 'upcoming'
-          ? 'hover:border-primary/30 hover:shadow-lg'
-          : 'opacity-75 hover:opacity-100'
-      }`}
-    >
-      <div className="grid lg:grid-cols-[400px_1fr] gap-0">
+    <div className={`transition-all duration-500 ${status === 'past' ? 'opacity-60 hover:opacity-100' : ''}`}>
+      <div className="grid md:grid-cols-[1fr_1.2fr] gap-12 items-start">
         {/* Image */}
-        {exhibition.imageUrl ? (
-          <div className="relative aspect-video lg:aspect-[4/3] overflow-hidden bg-muted">
-            <img
-              src={exhibition.imageUrl}
-              alt={exhibition.title}
-              className="w-full h-full object-cover"
-            />
-            {status === 'ongoing' && (
-              <div className="absolute top-4 left-4">
-                <span className="px-4 py-2 bg-primary text-primary-foreground text-sm font-bold rounded-full shadow-lg">
-                  전시중
-                </span>
-              </div>
-            )}
-            {status === 'upcoming' && (
-              <div className="absolute top-4 left-4">
-                <span className="px-4 py-2 bg-secondary text-secondary-foreground text-sm font-bold rounded-full shadow-lg">
-                  예정
-                </span>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="aspect-video lg:aspect-[4/3] bg-muted flex items-center justify-center">
-            <ImageIcon className="size-16 text-muted-foreground opacity-30" />
-          </div>
-        )}
+        <div className="relative">
+          {exhibition.imageUrl ? (
+            <div className="relative aspect-[4/3] overflow-hidden bg-neutral-100">
+              <img
+                src={exhibition.imageUrl}
+                alt={exhibition.title}
+                className="w-full h-full object-cover"
+              />
+              
+              {/* Status badge */}
+              {status === 'ongoing' && (
+                <div className="absolute top-6 left-6">
+                  <div className="px-4 py-2 bg-neutral-900 text-white text-xs font-light tracking-wide uppercase">
+                    Now Showing
+                  </div>
+                </div>
+              )}
+              {status === 'upcoming' && (
+                <div className="absolute top-6 left-6">
+                  <div className="px-4 py-2 bg-neutral-600 text-white text-xs font-light tracking-wide uppercase">
+                    Coming Soon
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="aspect-[4/3] bg-neutral-100 flex items-center justify-center">
+              <ImageIcon className="size-12 text-neutral-300" />
+            </div>
+          )}
+        </div>
 
         {/* Content */}
-        <div className="flex flex-col">
-          <CardHeader className="space-y-4">
+        <div className="space-y-8">
+          <div className="space-y-6">
             <div>
-              <CardTitle className="text-3xl mb-3">{exhibition.title}</CardTitle>
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Calendar className="size-4 shrink-0" />
-                  <CardDescription className="text-base">
-                    {new Date(exhibition.startDate).toLocaleDateString('en-US', {
+              <h3 className="text-3xl md:text-4xl font-light text-neutral-900 leading-tight mb-4">
+                {exhibition.title}
+              </h3>
+              <div className="w-16 h-px bg-neutral-300 mb-6" />
+            </div>
+
+            {/* Meta Information */}
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <Calendar className="size-4 text-neutral-500 mt-1 shrink-0" />
+                <div className="space-y-1">
+                  <p className="text-xs font-light tracking-wide uppercase text-neutral-500">
+                    Exhibition Period
+                  </p>
+                  <p className="text-base font-light text-neutral-900">
+                    {new Date(exhibition.startDate).toLocaleDateString('ko-KR', {
+                      year: 'numeric',
                       month: 'long',
                       day: 'numeric',
-                      year: 'numeric',
                     })}
                     {' - '}
-                    {new Date(exhibition.endDate).toLocaleDateString('en-US', {
+                    {new Date(exhibition.endDate).toLocaleDateString('ko-KR', {
+                      year: 'numeric',
                       month: 'long',
                       day: 'numeric',
-                      year: 'numeric',
                     })}
-                  </CardDescription>
+                  </p>
                 </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <MapPin className="size-4 shrink-0" />
-                  <p className="text-sm font-medium">{exhibition.location}</p>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <MapPin className="size-4 text-neutral-500 mt-1 shrink-0" />
+                <div className="space-y-1">
+                  <p className="text-xs font-light tracking-wide uppercase text-neutral-500">
+                    Location
+                  </p>
+                  <p className="text-base font-light text-neutral-900">
+                    {exhibition.location}
+                  </p>
                 </div>
               </div>
             </div>
-          </CardHeader>
+          </div>
 
-          <CardContent className="flex-1">
-            <p className="text-base leading-relaxed whitespace-pre-line">
+          {/* Description */}
+          <div className="space-y-4">
+            <div className="w-12 h-px bg-neutral-300" />
+            <p className="text-base text-neutral-700 font-light leading-relaxed whitespace-pre-line">
               {exhibition.description}
             </p>
+          </div>
 
-            {exhibition.artworkIds && exhibition.artworkIds.length > 0 && (
-              <div className="mt-4 pt-4 border-t">
-                <p className="text-sm text-muted-foreground">
-                  {exhibition.artworkIds.length}점의 작품 전시
-                </p>
-              </div>
-            )}
-          </CardContent>
+          {/* Artwork count */}
+          {exhibition.artworkIds && exhibition.artworkIds.length > 0 && (
+            <div className="pt-4 border-t border-neutral-200">
+              <p className="text-sm text-neutral-500 font-light">
+                {exhibition.artworkIds.length}점의 작품 전시
+              </p>
+            </div>
+          )}
         </div>
       </div>
-    </Card>
+    </div>
   );
 }

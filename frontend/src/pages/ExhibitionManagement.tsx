@@ -244,128 +244,183 @@ export function ExhibitionManagement() {
                   전시회 정보를 입력해주세요. 모든 필수 항목을 채워주세요.
                 </DialogDescription>
               </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Label htmlFor="title">전시회명 *</Label>
+              <form onSubmit={handleSubmit} className="space-y-8">
+                <div className="space-y-3">
+                  <Label htmlFor="title" className="text-xs font-light tracking-wide uppercase text-neutral-500">
+                    전시회명 *
+                  </Label>
                   <Input
                     id="title"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     required
+                    className="h-12 border-neutral-300 bg-white font-light focus:border-neutral-900 focus:ring-0"
+                    placeholder="전시회의 제목을 입력하세요"
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="description">전시회 설명 *</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="description" className="text-xs font-light tracking-wide uppercase text-neutral-500">
+                    전시회 설명 *
+                  </Label>
                   <Textarea
                     id="description"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    rows={3}
+                    rows={4}
                     required
+                    className="border-neutral-300 bg-white font-light focus:border-neutral-900 focus:ring-0 resize-none"
+                    placeholder="전시회에 대한 상세한 설명을 입력하세요..."
                   />
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <Label htmlFor="startDate">시작일 *</Label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <div className="space-y-3">
+                    <Label htmlFor="startDate" className="text-xs font-light tracking-wide uppercase text-neutral-500">
+                      시작일 *
+                    </Label>
                     <Input
                       id="startDate"
                       type="date"
                       value={formData.startDate}
                       onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                       required
+                      className="h-12 border-neutral-300 bg-white font-light focus:border-neutral-900 focus:ring-0"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="endDate">종료일 *</Label>
+                  <div className="space-y-3">
+                    <Label htmlFor="endDate" className="text-xs font-light tracking-wide uppercase text-neutral-500">
+                      종료일 *
+                    </Label>
                     <Input
                       id="endDate"
                       type="date"
                       value={formData.endDate}
                       onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                       required
+                      className="h-12 border-neutral-300 bg-white font-light focus:border-neutral-900 focus:ring-0"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="location">장소 *</Label>
+                  <div className="space-y-3">
+                    <Label htmlFor="location" className="text-xs font-light tracking-wide uppercase text-neutral-500">
+                      장소 *
+                    </Label>
                     <Input
                       id="location"
                       value={formData.location}
                       onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                       placeholder="예: YH Art Gallery"
                       required
+                      className="h-12 border-neutral-300 bg-white font-light focus:border-neutral-900 focus:ring-0"
                     />
                   </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="image">전시회 포스터 이미지</Label>
-                  <div className="mt-2">
+                <div className="space-y-3">
+                  <Label htmlFor="image" className="text-xs font-light tracking-wide uppercase text-neutral-500">
+                    전시회 포스터 이미지
+                  </Label>
+                  <div className="space-y-4">
                     <Input
                       id="image"
                       type="file"
                       accept="image/*"
                       onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                      className="h-12 border-neutral-300 bg-white font-light focus:border-neutral-900 focus:ring-0 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-light file:bg-neutral-100 file:text-neutral-700 hover:file:bg-neutral-200"
                     />
                     {formData.imageUrl && (
-                      <div className="mt-2">
+                      <div className="flex items-start gap-4 p-4 bg-neutral-50 rounded-lg">
                         <img
                           src={formData.imageUrl}
                           alt="미리보기"
-                          className="w-32 h-32 object-cover rounded border"
+                          className="w-24 h-24 object-cover rounded-lg border border-neutral-200"
                         />
+                        <div className="flex-1">
+                          <p className="text-sm font-light text-neutral-600 mb-1">현재 포스터 이미지</p>
+                          <p className="text-xs text-neutral-500">새 이미지를 선택하면 기존 이미지가 교체됩니다</p>
+                        </div>
                       </div>
                     )}
                   </div>
                 </div>
 
-                <div>
-                  <Label>전시 작품 선택</Label>
-                  <div className="mt-2 max-h-60 overflow-y-auto border rounded p-4">
+                <div className="space-y-3">
+                  <Label className="text-xs font-light tracking-wide uppercase text-neutral-500">
+                    전시 작품 선택
+                  </Label>
+                  <div className="border border-neutral-300 rounded-lg p-6 bg-neutral-50 max-h-80 overflow-y-auto">
                     {artworks.length === 0 ? (
-                      <p className="text-sm text-muted-foreground">등록된 작품이 없습니다.</p>
+                      <div className="text-center py-8">
+                        <p className="text-sm font-light text-neutral-500">등록된 작품이 없습니다.</p>
+                        <p className="text-xs text-neutral-400 mt-1">먼저 작품을 등록해주세요.</p>
+                      </div>
                     ) : (
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {artworks.map((artwork) => (
-                          <div key={artwork.id} className="flex items-center space-x-2">
+                          <div key={artwork.id} className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-neutral-200 hover:border-neutral-300 transition-colors">
                             <Checkbox
                               id={artwork.id}
                               checked={formData.artworkIds.includes(artwork.id)}
                               onCheckedChange={(checked) =>
                                 handleArtworkToggle(artwork.id, checked as boolean)
                               }
+                              className="mt-1"
                             />
-                            <label
-                              htmlFor={artwork.id}
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                            >
-                              {artwork.title} ({artwork.year})
-                            </label>
+                            <div className="flex-1 min-w-0">
+                              <label
+                                htmlFor={artwork.id}
+                                className="text-sm font-light text-neutral-900 cursor-pointer block leading-tight"
+                              >
+                                {artwork.title}
+                              </label>
+                              <p className="text-xs text-neutral-500 mt-1">
+                                {artwork.year} • {artwork.medium}
+                              </p>
+                            </div>
                           </div>
                         ))}
                       </div>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    선택된 작품: {formData.artworkIds.length}개
-                  </p>
+                  <div className="flex items-center justify-between text-xs text-neutral-500">
+                    <span>선택된 작품: {formData.artworkIds.length}개</span>
+                    {formData.artworkIds.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, artworkIds: [] })}
+                        className="text-neutral-400 hover:text-neutral-600 underline"
+                      >
+                        모두 해제
+                      </button>
+                    )}
+                  </div>
                 </div>
 
-                <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                    취소
-                  </Button>
-                  <Button type="submit" disabled={submitting || uploading}>
-                    {submitting || uploading ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        {uploading ? '업로드 중...' : '저장 중...'}
-                      </>
-                    ) : (
-                      editingExhibition ? '수정' : '추가'
-                    )}
-                  </Button>
+                <DialogFooter className="pt-8 border-t border-neutral-200">
+                  <div className="flex gap-4 w-full">
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => setIsDialogOpen(false)}
+                      className="flex-1 h-12 font-light border-neutral-300 hover:border-neutral-500 hover:bg-neutral-50"
+                    >
+                      취소
+                    </Button>
+                    <Button 
+                      type="submit" 
+                      disabled={submitting || uploading}
+                      className="flex-1 h-12 font-light bg-neutral-900 hover:bg-neutral-800"
+                    >
+                      {submitting || uploading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          {uploading ? '업로드 중...' : '저장 중...'}
+                        </>
+                      ) : (
+                        editingExhibition ? '전시회 수정' : '전시회 추가'
+                      )}
+                    </Button>
+                  </div>
                 </DialogFooter>
               </form>
             </DialogContent>

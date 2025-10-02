@@ -203,100 +203,134 @@ export function ArtworkManagement() {
                   작품 정보를 입력해주세요. 모든 필수 항목을 채워주세요.
                 </DialogDescription>
               </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="title">작품명 *</Label>
+              <form onSubmit={handleSubmit} className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-3">
+                    <Label htmlFor="title" className="text-xs font-light tracking-wide uppercase text-neutral-500">
+                      작품명 *
+                    </Label>
                     <Input
                       id="title"
                       value={formData.title}
                       onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                       required
+                      className="h-12 border-neutral-300 bg-white font-light focus:border-neutral-900 focus:ring-0"
+                      placeholder="작품의 제목을 입력하세요"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="year">제작년도 *</Label>
+                  <div className="space-y-3">
+                    <Label htmlFor="year" className="text-xs font-light tracking-wide uppercase text-neutral-500">
+                      제작년도 *
+                    </Label>
                     <Input
                       id="year"
                       type="number"
                       value={formData.year}
                       onChange={(e) => setFormData({ ...formData, year: Number(e.target.value) })}
                       required
+                      className="h-12 border-neutral-300 bg-white font-light focus:border-neutral-900 focus:ring-0"
+                      placeholder="2024"
                     />
                   </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="description">작품 설명 *</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="description" className="text-xs font-light tracking-wide uppercase text-neutral-500">
+                    작품 설명 *
+                  </Label>
                   <Textarea
                     id="description"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    rows={3}
+                    rows={4}
                     required
+                    className="border-neutral-300 bg-white font-light focus:border-neutral-900 focus:ring-0 resize-none"
+                    placeholder="작품에 대한 상세한 설명을 입력하세요..."
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="medium">재료/기법 *</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-3">
+                    <Label htmlFor="medium" className="text-xs font-light tracking-wide uppercase text-neutral-500">
+                      재료/기법 *
+                    </Label>
                     <Input
                       id="medium"
                       value={formData.medium}
                       onChange={(e) => setFormData({ ...formData, medium: e.target.value })}
                       placeholder="예: 캔버스에 유화"
                       required
+                      className="h-12 border-neutral-300 bg-white font-light focus:border-neutral-900 focus:ring-0"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="dimensions">크기 *</Label>
+                  <div className="space-y-3">
+                    <Label htmlFor="dimensions" className="text-xs font-light tracking-wide uppercase text-neutral-500">
+                      크기 *
+                    </Label>
                     <Input
                       id="dimensions"
                       value={formData.dimensions}
                       onChange={(e) => setFormData({ ...formData, dimensions: e.target.value })}
                       placeholder="예: 100 x 80 cm"
                       required
+                      className="h-12 border-neutral-300 bg-white font-light focus:border-neutral-900 focus:ring-0"
                     />
                   </div>
                 </div>
 
-
-
-                <div>
-                  <Label htmlFor="image">작품 이미지</Label>
-                  <div className="mt-2">
+                <div className="space-y-3">
+                  <Label htmlFor="image" className="text-xs font-light tracking-wide uppercase text-neutral-500">
+                    작품 이미지
+                  </Label>
+                  <div className="space-y-4">
                     <Input
                       id="image"
                       type="file"
                       accept="image/*"
                       onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                      className="h-12 border-neutral-300 bg-white font-light focus:border-neutral-900 focus:ring-0 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-light file:bg-neutral-100 file:text-neutral-700 hover:file:bg-neutral-200"
                     />
                     {formData.imageUrl && (
-                      <div className="mt-2">
+                      <div className="flex items-start gap-4 p-4 bg-neutral-50 rounded-lg">
                         <img
                           src={formData.imageUrl}
                           alt="미리보기"
-                          className="w-32 h-32 object-cover rounded border"
+                          className="w-24 h-24 object-cover rounded-lg border border-neutral-200"
                         />
+                        <div className="flex-1">
+                          <p className="text-sm font-light text-neutral-600 mb-1">현재 이미지</p>
+                          <p className="text-xs text-neutral-500">새 이미지를 선택하면 기존 이미지가 교체됩니다</p>
+                        </div>
                       </div>
                     )}
                   </div>
                 </div>
 
-                <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                    취소
-                  </Button>
-                  <Button type="submit" disabled={submitting || uploading}>
-                    {submitting || uploading ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        {uploading ? '업로드 중...' : '저장 중...'}
-                      </>
-                    ) : (
-                      editingArtwork ? '수정' : '추가'
-                    )}
-                  </Button>
+                <DialogFooter className="pt-8 border-t border-neutral-200">
+                  <div className="flex gap-4 w-full">
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => setIsDialogOpen(false)}
+                      className="flex-1 h-12 font-light border-neutral-300 hover:border-neutral-500 hover:bg-neutral-50"
+                    >
+                      취소
+                    </Button>
+                    <Button 
+                      type="submit" 
+                      disabled={submitting || uploading}
+                      className="flex-1 h-12 font-light bg-neutral-900 hover:bg-neutral-800"
+                    >
+                      {submitting || uploading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          {uploading ? '업로드 중...' : '저장 중...'}
+                        </>
+                      ) : (
+                        editingArtwork ? '작품 수정' : '작품 추가'
+                      )}
+                    </Button>
+                  </div>
                 </DialogFooter>
               </form>
             </DialogContent>
