@@ -16,7 +16,6 @@
   "homepage": "https://github.com/DouglasMin/dadspicsite#readme",
   "description": "",
   "devDependencies": {
-    "@playwright/test": "^1.55.1",
     "@types/node": "^24.6.1"
   }
 }

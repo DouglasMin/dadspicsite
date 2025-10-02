@@ -1,5 +1,6 @@
-# Claude Code
+# Development Environment
 .claude/
+.kiro/
 
 # Dependencies
 node_modules/
@@ -58,9 +59,4 @@ backend/**/*.zip
 *.log
 .cache/
 
-# Playwright
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-/playwright/.auth/
+
