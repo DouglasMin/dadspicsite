@@ -78,21 +78,7 @@ export function Gallery() {
                       {/* Overlay on hover */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                      {/* Status Badge */}
-                      {artwork.status === 'sold' && (
-                        <div className="absolute top-3 right-3">
-                          <span className="px-3 py-1 bg-destructive text-white text-xs font-semibold rounded-full">
-                            판매완료
-                          </span>
-                        </div>
-                      )}
-                      {artwork.status === 'available' && artwork.price && (
-                        <div className="absolute top-3 right-3">
-                          <span className="px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full">
-                            판매가능
-                          </span>
-                        </div>
-                      )}
+
                     </div>
                   ) : (
                     <div className="aspect-[3/4] bg-muted flex items-center justify-center">
@@ -114,11 +100,6 @@ export function Gallery() {
                     <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
                       {artwork.description}
                     </p>
-                    {artwork.price && artwork.status === 'available' && (
-                      <p className="text-sm font-semibold text-primary mt-3">
-                        ${artwork.price.toLocaleString()}
-                      </p>
-                    )}
                   </CardContent>
                 </Card>
               ))}

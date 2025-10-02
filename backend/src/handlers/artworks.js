@@ -70,8 +70,6 @@ async function createArtwork(bodyString) {
     medium: data.medium,
     dimensions: data.dimensions,
     imageUrl: data.imageUrl || '',
-    price: data.price || null,
-    status: data.status || 'not_for_sale',
     createdAt: now,
     updatedAt: now,
   };
@@ -94,7 +92,7 @@ async function updateArtwork(id, bodyString) {
     updatedAt: new Date().toISOString(),
   };
 
-  const allowedFields = ['title', 'description', 'year', 'medium', 'dimensions', 'imageUrl', 'price', 'status'];
+  const allowedFields = ['title', 'description', 'year', 'medium', 'dimensions', 'imageUrl'];
   allowedFields.forEach((field) => {
     if (data[field] !== undefined) {
       updates[field] = data[field];

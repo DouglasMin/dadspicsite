@@ -5,18 +5,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { getCurrentUser, getIdToken } from '@/lib/auth';
+
+import { getIdToken } from '@/lib/auth';
 import { api, type Artwork } from '@/lib/api';
-import { ArrowLeft, Plus, Edit, Trash2, Upload, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { ArrowLeft, Plus, Edit, Trash2, Image as ImageIcon, Loader2 } from 'lucide-react';
 
 export function ArtworkManagement() {
   const navigate = useNavigate();
+  const { isAuthenticated, isLoading } = useAuthGuard();
   const [artworks, setArtworks] = useState<Artwork[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingArtwork, setEditingArtwork] = useState<Artwork | null>(null);
   const [formData, setFormData] = useState({
@@ -25,43 +27,35 @@ export function ArtworkManagement() {
     year: new Date().getFullYear(),
     medium: '',
     dimensions: '',
-    imageUrl: '',
-    price: '',
-    status: 'not_for_sale' as const
+    imageUrl: ''
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    checkAuthAndLoadData();
-  }, []);
-
-  const checkAuthAndLoadData = async () => {
-    const user = await getCurrentUser();
-    if (!user) {
-      navigate('/login');
-      return;
+    if (isAuthenticated) {
+      loadArtworks();
     }
-
-    const token = await getIdToken();
-    if (token) {
-      api.setToken(token);
-    }
-
-    await loadArtworks();
-  };
+  }, [isAuthenticated]);
 
   const loadArtworks = async () => {
     try {
+      const token = await getIdToken();
+      if (token) {
+        api.setToken(token);
+      }
+
       const data = await api.getArtworks();
       setArtworks(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('작품 목록 로딩 실패:', error);
     } finally {
-      setLoading(false);
+      setDataLoading(false);
     }
   };
+
+
 
   const handleImageUpload = async () => {
     if (!imageFile) return '';
@@ -84,7 +78,7 @@ export function ArtworkManagement() {
 
     try {
       let imageUrl = formData.imageUrl;
-      
+
       // 새 이미지가 선택된 경우 업로드
       if (imageFile) {
         imageUrl = await handleImageUpload();
@@ -93,7 +87,6 @@ export function ArtworkManagement() {
       const artworkData = {
         ...formData,
         year: Number(formData.year),
-        price: formData.price ? Number(formData.price) : undefined,
         imageUrl
       };
 
@@ -122,9 +115,7 @@ export function ArtworkManagement() {
       year: artwork.year,
       medium: artwork.medium,
       dimensions: artwork.dimensions,
-      imageUrl: artwork.imageUrl,
-      price: artwork.price?.toString() || '',
-      status: artwork.status
+      imageUrl: artwork.imageUrl
     });
     setImageFile(null);
     setIsDialogOpen(true);
@@ -149,35 +140,30 @@ export function ArtworkManagement() {
       year: new Date().getFullYear(),
       medium: '',
       dimensions: '',
-      imageUrl: '',
-      price: '',
-      status: 'not_for_sale'
+      imageUrl: ''
     });
     setEditingArtwork(null);
     setImageFile(null);
   };
 
-  const getStatusBadge = (status: string) => {
-    const variants = {
-      available: 'default',
-      sold: 'destructive',
-      not_for_sale: 'secondary'
-    } as const;
 
-    const labels = {
-      available: '판매가능',
-      sold: '판매완료',
-      not_for_sale: '비매품'
-    };
 
+  if (isLoading) {
     return (
-      <Badge variant={variants[status as keyof typeof variants]}>
-        {labels[status as keyof typeof labels]}
-      </Badge>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">인증 확인 중...</p>
+        </div>
+      </div>
     );
-  };
+  }
 
-  if (loading) {
+  if (!isAuthenticated) {
+    return null; // useAuthGuard가 리다이렉트 처리
+  }
+
+  if (dataLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -199,6 +185,7 @@ export function ArtworkManagement() {
               대시보드로
             </Button>
             <h1 className="text-xl font-bold">작품 관리</h1>
+
           </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
@@ -238,7 +225,7 @@ export function ArtworkManagement() {
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <Label htmlFor="description">작품 설명 *</Label>
                   <Textarea
@@ -273,31 +260,7 @@ export function ArtworkManagement() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="price">가격 (원)</Label>
-                    <Input
-                      id="price"
-                      type="number"
-                      value={formData.price}
-                      onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                      placeholder="비매품인 경우 비워두세요"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="status">판매 상태</Label>
-                    <Select value={formData.status} onValueChange={(value: any) => setFormData({ ...formData, status: value })}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="not_for_sale">비매품</SelectItem>
-                        <SelectItem value="available">판매가능</SelectItem>
-                        <SelectItem value="sold">판매완료</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
+
 
                 <div>
                   <Label htmlFor="image">작품 이미지</Label>
@@ -366,8 +329,6 @@ export function ArtworkManagement() {
                     <TableHead>제작년도</TableHead>
                     <TableHead>재료/기법</TableHead>
                     <TableHead>크기</TableHead>
-                    <TableHead>상태</TableHead>
-                    <TableHead>가격</TableHead>
                     <TableHead className="text-right">작업</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -391,10 +352,6 @@ export function ArtworkManagement() {
                       <TableCell>{artwork.year}</TableCell>
                       <TableCell>{artwork.medium}</TableCell>
                       <TableCell>{artwork.dimensions}</TableCell>
-                      <TableCell>{getStatusBadge(artwork.status)}</TableCell>
-                      <TableCell>
-                        {artwork.price ? `₩${artwork.price.toLocaleString()}` : '-'}
-                      </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Button

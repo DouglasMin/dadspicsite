@@ -16,14 +16,13 @@
     "filesystem": {
       "command": "uvx",
       "args": [
-        "mcp-server-filesystem",
-        "--base-directory",
-        "."
+        "mcp-filesystem",
+        "--stdio"
       ],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR"
       },
-      "disabled": false,
+      "disabled": true,
       "autoApprove": [
         "read_file",
         "list_directory"
@@ -81,17 +80,16 @@
       ],
       "disabled": false,
       "autoApprove": [],
-      "disabledTools": [],
-      "description": "Playwright MCP server for web automation and testing"
+      "disabledTools": []
     },
     "brave-search": {
       "command": "uvx",
       "args": [
-        "mcp-server-brave-search"
+        "mcp-brave-search"
       ],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR",
-        "BRAVE_API_KEY": ""
+        "BRAVE_API_KEY": "BSAmFpSfcny5SAfgorimKvhSNMcrGYx"
       },
       "disabled": false,
       "autoApprove": [],

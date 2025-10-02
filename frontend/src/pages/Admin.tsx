@@ -2,53 +2,34 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { getCurrentUser, signOut, getIdToken } from '@/lib/auth';
+import { signOut, getIdToken } from '@/lib/auth';
 import { api, type Artwork, type Exhibition } from '@/lib/api';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { Palette, Image, Calendar, LogOut, Loader2 } from 'lucide-react';
 
 export function Admin() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [userEmail, setUserEmail] = useState<string>('');
+  const { isAuthenticated, userEmail, isLoading } = useAuthGuard();
   const [stats, setStats] = useState({
     totalArtworks: 0,
-    ongoingExhibitions: 0,
-    availableArtworks: 0
+    ongoingExhibitions: 0
   });
+  const [statsLoading, setStatsLoading] = useState(true);
 
   useEffect(() => {
-    checkAuthAndLoadData();
-  }, []);
-
-  const checkAuthAndLoadData = async () => {
-    const user = await getCurrentUser();
-    if (!user) {
-      navigate('/login');
-      return;
+    if (isAuthenticated) {
+      loadStats();
     }
-
-    // Get user attributes
-    user.getUserAttributes(async (err, attributes) => {
-      if (!err && attributes) {
-        const emailAttr = attributes.find(attr => attr.Name === 'email');
-        if (emailAttr) {
-          setUserEmail(emailAttr.Value);
-        }
-      }
-
-      // Set up API token and load stats
-      const token = await getIdToken();
-      if (token) {
-        api.setToken(token);
-        await loadStats();
-      }
-      
-      setLoading(false);
-    });
-  };
+  }, [isAuthenticated]);
 
   const loadStats = async () => {
     try {
+      // Set up API token
+      const token = await getIdToken();
+      if (token) {
+        api.setToken(token);
+      }
+
       const [artworks, exhibitions] = await Promise.all([
         api.getArtworks(),
         api.getExhibitions()
@@ -61,34 +42,37 @@ export function Admin() {
         return now >= start && now <= end;
       }).length;
 
-      const availableArtworks = artworks.filter(artwork => 
-        artwork.status === 'available'
-      ).length;
-
       setStats({
         totalArtworks: artworks.length,
-        ongoingExhibitions,
-        availableArtworks
+        ongoingExhibitions
       });
     } catch (error) {
       console.error('통계 로딩 실패:', error);
+    } finally {
+      setStatsLoading(false);
     }
   };
+
+
 
   const handleSignOut = () => {
     signOut();
     navigate('/login');
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">로딩 중...</p>
+          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">인증 확인 중...</p>
         </div>
       </div>
     );
+  }
+
+  if (!isAuthenticated) {
+    return null; // useAuthGuard가 리다이렉트 처리
   }
 
   return (
@@ -101,6 +85,7 @@ export function Admin() {
             <span className="text-xl font-bold">YH Art Studio 관리자</span>
           </div>
           <div className="flex items-center gap-4">
+
             <span className="text-sm text-muted-foreground">{userEmail}</span>
             <Button variant="outline" size="sm" onClick={handleSignOut}>
               <LogOut className="h-4 w-4 mr-2" />
@@ -181,7 +166,7 @@ export function Admin() {
               <CardHeader className="pb-3">
                 <CardDescription>총 작품 수</CardDescription>
                 <CardTitle className="text-3xl">
-                  {loading ? <Loader2 className="h-8 w-8 animate-spin" /> : stats.totalArtworks}
+                  {statsLoading ? <Loader2 className="h-8 w-8 animate-spin" /> : stats.totalArtworks}
                 </CardTitle>
               </CardHeader>
             </Card>
@@ -189,18 +174,11 @@ export function Admin() {
               <CardHeader className="pb-3">
                 <CardDescription>진행 중인 전시회</CardDescription>
                 <CardTitle className="text-3xl">
-                  {loading ? <Loader2 className="h-8 w-8 animate-spin" /> : stats.ongoingExhibitions}
+                  {statsLoading ? <Loader2 className="h-8 w-8 animate-spin" /> : stats.ongoingExhibitions}
                 </CardTitle>
               </CardHeader>
             </Card>
-            <Card>
-              <CardHeader className="pb-3">
-                <CardDescription>판매 가능 작품</CardDescription>
-                <CardTitle className="text-3xl">
-                  {loading ? <Loader2 className="h-8 w-8 animate-spin" /> : stats.availableArtworks}
-                </CardTitle>
-              </CardHeader>
-            </Card>
+
           </div>
         </div>
       </main>

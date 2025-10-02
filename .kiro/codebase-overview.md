@@ -111,8 +111,6 @@ A modern art gallery platform with QR code integration for museum visitors. Buil
   medium: string,       // Art medium (oil, acrylic, etc.)
   dimensions: string,   // Physical dimensions
   imageUrl: string,     // S3 image URL
-  price?: number,       // Optional price
-  status: 'available' | 'sold' | 'not_for_sale',
   createdAt: string,    // ISO timestamp
   updatedAt: string     // ISO timestamp
 }

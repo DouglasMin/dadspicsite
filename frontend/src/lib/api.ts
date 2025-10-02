@@ -8,8 +8,6 @@ export interface Artwork {
   medium: string;
   dimensions: string;
   imageUrl: string;
-  price?: number;
-  status: 'available' | 'sold' | 'not_for_sale';
   createdAt: string;
   updatedAt: string;
 }

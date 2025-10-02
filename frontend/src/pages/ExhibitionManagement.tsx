@@ -9,15 +9,17 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { getCurrentUser, getIdToken } from '@/lib/auth';
+import { getIdToken } from '@/lib/auth';
 import { api, type Exhibition, type Artwork } from '@/lib/api';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { ArrowLeft, Plus, Edit, Trash2, Calendar, Loader2, Image as ImageIcon } from 'lucide-react';
 
 export function ExhibitionManagement() {
   const navigate = useNavigate();
+  const { isAuthenticated, isLoading } = useAuthGuard();
   const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
   const [artworks, setArtworks] = useState<Artwork[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingExhibition, setEditingExhibition] = useState<Exhibition | null>(null);
   const [formData, setFormData] = useState({
@@ -34,22 +36,22 @@ export function ExhibitionManagement() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    checkAuthAndLoadData();
-  }, []);
-
-  const checkAuthAndLoadData = async () => {
-    const user = await getCurrentUser();
-    if (!user) {
-      navigate('/login');
-      return;
+    if (isAuthenticated) {
+      loadData();
     }
+  }, [isAuthenticated]);
 
-    const token = await getIdToken();
-    if (token) {
-      api.setToken(token);
+  const loadData = async () => {
+    try {
+      const token = await getIdToken();
+      if (token) {
+        api.setToken(token);
+      }
+
+      await Promise.all([loadExhibitions(), loadArtworks()]);
+    } finally {
+      setDataLoading(false);
     }
-
-    await Promise.all([loadExhibitions(), loadArtworks()]);
   };
 
   const loadExhibitions = async () => {
@@ -67,8 +69,6 @@ export function ExhibitionManagement() {
       setArtworks(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('작품 목록 로딩 실패:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -93,7 +93,7 @@ export function ExhibitionManagement() {
 
     try {
       let imageUrl = formData.imageUrl;
-      
+
       // 새 이미지가 선택된 경우 업로드
       if (imageFile) {
         imageUrl = await handleImageUpload();
@@ -189,7 +189,22 @@ export function ExhibitionManagement() {
     return new Date(dateString).toLocaleDateString('ko-KR');
   };
 
-  if (loading) {
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">인증 확인 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null; // useAuthGuard가 리다이렉트 처리
+  }
+
+  if (dataLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -211,6 +226,7 @@ export function ExhibitionManagement() {
               대시보드로
             </Button>
             <h1 className="text-xl font-bold">전시회 관리</h1>
+
           </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
@@ -238,7 +254,7 @@ export function ExhibitionManagement() {
                     required
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="description">전시회 설명 *</Label>
                   <Textarea
@@ -316,7 +332,7 @@ export function ExhibitionManagement() {
                             <Checkbox
                               id={artwork.id}
                               checked={formData.artworkIds.includes(artwork.id)}
-                              onCheckedChange={(checked) => 
+                              onCheckedChange={(checked) =>
                                 handleArtworkToggle(artwork.id, checked as boolean)
                               }
                             />

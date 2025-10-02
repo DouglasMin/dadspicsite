@@ -1,11 +1,11 @@
-import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, type FormEvent } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { signIn, completeNewPassword } from '@/lib/auth';
-import { Palette } from 'lucide-react';
+import { signIn, completeNewPassword, wasAutoLoggedOut } from '@/lib/auth';
+import { Palette, ArrowLeft, Home } from 'lucide-react';
 import type { CognitoUser } from 'amazon-cognito-identity-js';
 
 export function Login() {
@@ -18,6 +18,16 @@ export function Login() {
   const [loading, setLoading] = useState(false);
   const [needsPasswordChange, setNeedsPasswordChange] = useState(false);
   const [cognitoUser, setCognitoUser] = useState<CognitoUser | null>(null);
+  const [showAutoLogoutMessage, setShowAutoLogoutMessage] = useState(false);
+
+  useEffect(() => {
+    // 자동 로그아웃 메시지 확인
+    if (wasAutoLoggedOut()) {
+      setShowAutoLogoutMessage(true);
+      // 5초 후 메시지 숨김
+      setTimeout(() => setShowAutoLogoutMessage(false), 5000);
+    }
+  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -79,14 +89,56 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <div className="w-full max-w-md">
-        <div className="flex items-center justify-center mb-8">
-          <Palette className="h-12 w-12 text-primary" />
-          <span className="ml-3 text-3xl font-bold text-primary">YH Art Studio</span>
-        </div>
+    <div className="min-h-screen flex flex-col bg-background">
+      {/* 상단 네비게이션 */}
+      <header className="border-b bg-background/95 backdrop-blur">
+        <div className="container mx-auto px-4 lg:px-6">
+          <nav className="flex items-center justify-between h-16">
+            {/* 로고 */}
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="relative">
+                <Palette className="size-6 text-primary transition-transform group-hover:rotate-12" />
+              </div>
+              <span className="text-lg font-bold tracking-tight text-foreground">
+                YH Art Lab
+              </span>
+            </Link>
 
-        <Card>
+            {/* 네비게이션 링크 */}
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/" className="flex items-center gap-2">
+                  <Home className="h-4 w-4" />
+                  홈으로
+                </Link>
+              </Button>
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/gallery" className="flex items-center gap-2">
+                  <Palette className="h-4 w-4" />
+                  갤러리
+                </Link>
+              </Button>
+            </div>
+          </nav>
+        </div>
+      </header>
+
+      {/* 메인 로그인 영역 */}
+      <div className="flex-1 flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md">
+          {/* 자동 로그아웃 메시지 */}
+          {showAutoLogoutMessage && (
+            <div className="mb-6 p-3 text-sm text-amber-800 bg-amber-50 rounded-lg border border-amber-200">
+              <span className="font-medium">세션이 만료되어 로그아웃되었습니다</span>
+            </div>
+          )}
+
+          <div className="flex items-center justify-center mb-8">
+            <Palette className="h-12 w-12 text-primary" />
+            <span className="ml-3 text-3xl font-bold text-primary">YH Art Studio</span>
+          </div>
+
+          <Card>
           <CardHeader>
             <CardTitle>{needsPasswordChange ? '비밀번호 변경' : '관리자 로그인'}</CardTitle>
             <CardDescription>
@@ -175,7 +227,15 @@ export function Login() {
               </form>
             )}
           </CardContent>
-        </Card>
+          </Card>
+
+          {/* 하단 안내 */}
+          <div className="mt-6 text-center">
+            <Link to="/gallery" className="text-sm text-primary hover:underline">
+              갤러리 둘러보기
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );
