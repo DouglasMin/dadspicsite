@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { signIn, completeNewPassword, wasAutoLoggedOut } from '@/lib/auth';
-import { Palette, ArrowLeft, Home } from 'lucide-react';
+import { Palette, Home } from 'lucide-react';
 import type { CognitoUser } from 'amazon-cognito-identity-js';
 
 export function Login() {

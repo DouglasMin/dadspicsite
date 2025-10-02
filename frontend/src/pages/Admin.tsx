@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { signOut, getIdToken } from '@/lib/auth';
-import { api, type Artwork, type Exhibition } from '@/lib/api';
+import { api } from '@/lib/api';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { Palette, Image, Calendar, LogOut, Loader2 } from 'lucide-react';
 

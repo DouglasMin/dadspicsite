@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { api, type Artwork } from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Loader2, Calendar, Ruler, Palette, DollarSign, Tag, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Loader2, Calendar, Ruler, Palette, AlertCircle } from 'lucide-react';
 
 export function ArtworkDetail() {
   const { id } = useParams<{ id: string }>();
@@ -84,22 +84,6 @@ export function ArtworkDetail() {
                   alt={artwork.title}
                   className="w-full h-full object-cover"
                 />
-
-                {/* Status Badge */}
-                {artwork.status === 'sold' && (
-                  <div className="absolute top-6 right-6">
-                    <span className="px-4 py-2 bg-destructive text-white text-sm font-bold rounded-full shadow-lg">
-                      판매완료
-                    </span>
-                  </div>
-                )}
-                {artwork.status === 'available' && (
-                  <div className="absolute top-6 right-6">
-                    <span className="px-4 py-2 bg-primary text-primary-foreground text-sm font-bold rounded-full shadow-lg">
-                      판매가능
-                    </span>
-                  </div>
-                )}
               </div>
 
               {/* Image Caption */}
@@ -143,66 +127,22 @@ export function ArtworkDetail() {
                 </CardContent>
               </Card>
 
-              {/* Details Card */}
-              <Card className="border-2 bg-muted/50">
-                <CardHeader>
-                  <CardTitle className="text-xl">상세 정보</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between py-2 border-b">
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Tag className="size-4" />
-                        <span className="font-medium">상태</span>
-                      </div>
-                      <span className="font-semibold capitalize">
-                        {artwork.status === 'not_for_sale' ? '비매품' : artwork.status === 'sold' ? '판매완료' : artwork.status === 'available' ? '판매가능' : artwork.status}
-                      </span>
-                    </div>
-
-                    {artwork.price && artwork.status === 'available' && (
-                      <div className="flex items-center justify-between py-2">
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <DollarSign className="size-4" />
-                          <span className="font-medium">가격</span>
-                        </div>
-                        <span className="text-2xl font-bold text-primary">
-                          ${artwork.price.toLocaleString()}
-                        </span>
-                      </div>
-                    )}
-                  </div>
+              {/* CTA */}
+              <Card className="border-2 border-primary/50 bg-primary/5">
+                <CardContent className="pt-6">
+                  <h3 className="font-semibold text-lg mb-2">이 작품에 관심이 있으신가요?</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    작품에 대해 더 알아보려면 문의해 주세요.
+                  </p>
+                  <Button
+                    size="lg"
+                    className="w-full"
+                    onClick={() => navigate('/contact')}
+                  >
+                    작품 문의하기
+                  </Button>
                 </CardContent>
               </Card>
-
-              {/* CTA */}
-              {artwork.status === 'available' && (
-                <Card className="border-2 border-primary/50 bg-primary/5">
-                  <CardContent className="pt-6">
-                    <h3 className="font-semibold text-lg mb-2">이 작품에 관심이 있으신가요?</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      구매 또는 직접 감상에 대해 더 알아보려면 문의해 주세요.
-                    </p>
-                    <Button
-                      size="lg"
-                      className="w-full"
-                      onClick={() => navigate('/contact')}
-                    >
-                      작품 문의하기
-                    </Button>
-                  </CardContent>
-                </Card>
-              )}
-
-              {artwork.status === 'sold' && (
-                <Card className="border-2 border-muted">
-                  <CardContent className="pt-6">
-                    <p className="text-sm text-muted-foreground text-center">
-                      이 작품은 판매되었습니다. 갤러리에서 구매 가능한 다른 작품을 둘러보세요.
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
             </div>
           </div>
         </div>
