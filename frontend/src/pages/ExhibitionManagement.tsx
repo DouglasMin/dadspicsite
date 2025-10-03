@@ -398,16 +398,16 @@ export function ExhibitionManagement() {
 
                 <DialogFooter className="pt-8 border-t border-neutral-200">
                   <div className="flex gap-4 w-full">
-                    <Button 
-                      type="button" 
-                      variant="outline" 
+                    <Button
+                      type="button"
+                      variant="outline"
                       onClick={() => setIsDialogOpen(false)}
                       className="flex-1 h-12 font-light border-neutral-300 hover:border-neutral-500 hover:bg-neutral-50"
                     >
                       취소
                     </Button>
-                    <Button 
-                      type="submit" 
+                    <Button
+                      type="submit"
                       disabled={submitting || uploading}
                       className="flex-1 h-12 font-light bg-neutral-900 hover:bg-neutral-800"
                     >

@@ -1,5 +1,4 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Palette } from 'lucide-react';
 
 export function Layout() {
   const location = useLocation();
@@ -18,17 +17,15 @@ export function Layout() {
         <div className="container mx-auto px-6 lg:px-12">
           <nav className="flex items-center justify-between h-20">
             {/* Logo/Brand - Minimal */}
-            <Link to="/" className="group">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-neutral-900 flex items-center justify-center transition-transform group-hover:rotate-45 duration-300">
-                  <Palette className="size-4 text-white" />
-                </div>
-                <div className="hidden sm:block">
-                  <span className="text-lg font-light tracking-wide text-neutral-900">
-                    YH Art Lab
-                  </span>
-                </div>
-              </div>
+            <Link to="/" className="group flex items-center gap-4">
+              <img 
+                src="/yh-logo-no-background.png" 
+                alt="YH" 
+                className="h-12 w-auto transition-opacity group-hover:opacity-70"
+              />
+              <span className="text-xl font-light tracking-wide text-neutral-900 hidden sm:inline">
+                Art Lab
+              </span>
             </Link>
 
             {/* Navigation - Minimal */}
@@ -89,12 +86,14 @@ export function Layout() {
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             {/* Brand */}
             <div className="md:col-span-2">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-6 h-6 bg-neutral-900 flex items-center justify-center">
-                  <Palette className="size-3 text-white" />
-                </div>
-                <span className="font-light text-lg tracking-wide text-neutral-900">
-                  YH Art Lab
+              <div className="flex items-center gap-4 mb-6">
+                <img 
+                  src="/yh-logo-no-background.png" 
+                  alt="YH" 
+                  className="h-8 w-auto"
+                />
+                <span className="font-light text-xl tracking-wide text-neutral-900">
+                  Art Lab
                 </span>
               </div>
               <p className="text-sm text-neutral-600 font-light leading-relaxed max-w-md">

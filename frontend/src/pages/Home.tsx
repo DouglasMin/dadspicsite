@@ -76,13 +76,21 @@ export function Home() {
               Contemporary Art Gallery
             </div>
 
-            {/* Large, elegant heading */}
+            {/* Large, elegant heading with logo */}
             <div className="space-y-6">
-              <h1 className="text-6xl md:text-8xl lg:text-9xl font-light tracking-tight text-neutral-900 leading-[0.9]">
-                YH Art
-                <br />
-                <span className="font-extralight text-neutral-600">Lab</span>
-              </h1>
+              <div className="flex items-center justify-center gap-6 md:gap-8">
+                <img 
+                  src="/yh-logo-no-background.png" 
+                  alt="YH" 
+                  className="h-32 md:h-48 lg:h-56 w-auto"
+                />
+                <h1 className="text-6xl md:text-8xl lg:text-9xl font-light tracking-tight text-neutral-900">
+                  Art
+                </h1>
+                <h1 className="text-6xl md:text-8xl lg:text-9xl font-extralight tracking-tight text-neutral-600">
+                  Lab
+                </h1>
+              </div>
               
               <div className="w-24 h-px bg-neutral-300 mx-auto" />
             </div>
