@@ -84,7 +84,8 @@ export function Gallery() {
               {artworks.map((artwork, index) => (
                 <div
                   key={artwork.id}
-                  className="group"
+                  className="group cursor-pointer"
+                  onClick={() => navigate(`/artwork/${artwork.id}`)}
                 >
                   {/* Image Container */}
                   {artwork.imageUrl ? (
@@ -100,7 +101,10 @@ export function Gallery() {
                       
                       {/* Action button */}
                       <button
-                        onClick={() => openLightboxOnSlide(index + 1)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openLightboxOnSlide(index + 1);
+                        }}
                         className="absolute top-4 right-4 w-10 h-10 bg-white/90 hover:bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center"
                         title="확대 보기"
                       >
@@ -115,10 +119,7 @@ export function Gallery() {
 
                   {/* Content */}
                   <div className="space-y-3">
-                    <h3 
-                      className="text-lg font-light text-neutral-900 tracking-wide cursor-pointer hover:text-neutral-600 transition-colors"
-                      onClick={() => navigate(`/artwork/${artwork.id}`)}
-                    >
+                    <h3 className="text-lg font-light text-neutral-900 tracking-wide group-hover:text-neutral-600 transition-colors">
                       {artwork.title}
                     </h3>
                     <div className="flex items-center gap-3 text-sm text-neutral-500 font-light">
@@ -126,9 +127,11 @@ export function Gallery() {
                       <div className="w-px h-3 bg-neutral-300" />
                       <span>{artwork.medium}</span>
                     </div>
-                    <p className="text-sm text-neutral-600 font-light leading-relaxed line-clamp-2">
-                      {artwork.description}
-                    </p>
+                    {artwork.description && (
+                      <p className="text-sm text-neutral-600 font-light leading-relaxed line-clamp-3">
+                        {artwork.description}
+                      </p>
+                    )}
                   </div>
                 </div>
               ))}
