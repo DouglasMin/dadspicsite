@@ -325,6 +325,7 @@ export function Home() {
         toggler={lightboxController.toggler}
         sources={featuredArtworks.map(artwork => artwork.image)}
         slide={lightboxController.slide}
+        type="image"
       />
     </div>
   );

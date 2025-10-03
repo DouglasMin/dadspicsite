@@ -142,6 +142,7 @@ export function Gallery() {
         toggler={lightboxController.toggler}
         sources={artworks.filter(artwork => artwork.imageUrl).map(artwork => artwork.imageUrl)}
         slide={lightboxController.slide}
+        type="image"
       />
     </div>
   );

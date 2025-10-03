@@ -13,7 +13,7 @@ export function useAuthGuard() {
     const checkAuth = async () => {
       try {
         const user = await getCurrentUser();
-        
+
         if (!mounted) return;
 
         if (!user) {
@@ -25,7 +25,7 @@ export function useAuthGuard() {
         // 사용자 정보 가져오기
         user.getUserAttributes((err, attributes) => {
           if (!mounted) return;
-          
+
           if (!err && attributes) {
             const emailAttr = attributes.find(attr => attr.Name === 'email');
             if (emailAttr) {
