@@ -64,12 +64,12 @@ export function Contact() {
       {/* Contact Section */}
       <section className="pb-24 relative">
         {/* Subtle decorative element */}
-        <div className="absolute bottom-12 right-12 opacity-30 pointer-events-none hidden lg:block">
+        <div className="absolute bottom-16 right-16 pointer-events-none hidden lg:block">
           <img
             src="/ddunddun2.png"
             alt=""
-            className="w-32 h-32 object-contain animate-[float_8s_ease-in-out_infinite]"
-            style={{ filter: 'grayscale(40%) opacity(0.6)' }}
+            className="w-36 h-36 object-contain animate-[float_8s_ease-in-out_infinite]"
+            style={{ filter: 'grayscale(10%)' }}
           />
         </div>
 

@@ -53,7 +53,7 @@ export function ArtworkDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* Back Button */}
       <div className="container mx-auto px-6 lg:px-12 pt-8">
         <Button

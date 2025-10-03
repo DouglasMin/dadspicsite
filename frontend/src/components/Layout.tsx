@@ -13,7 +13,7 @@ export function Layout() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header - Minimal Gallery Style */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-neutral-200/50">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-card/90 backdrop-blur-md border-b border-border/50">
         <div className="container mx-auto px-6 lg:px-12">
           <nav className="flex items-center justify-between h-20">
             {/* Logo/Brand - Minimal */}
@@ -81,7 +81,7 @@ export function Layout() {
       </main>
 
       {/* Footer - Minimal */}
-      <footer className="bg-neutral-50 border-t border-neutral-200 py-16">
+      <footer className="bg-background border-t border-border py-16">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             {/* Brand */}

@@ -51,21 +51,21 @@ export function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-background">
       {/* Hero Section - Minimalist Gallery Style */}
-      <section className="relative min-h-screen flex items-center justify-center bg-white">
+      <section className="relative min-h-screen flex items-center justify-center bg-card">
         {/* Subtle background texture */}
         <div className="absolute inset-0 opacity-[0.02]">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,_#000_1px,_transparent_0)] bg-[length:24px_24px]" />
         </div>
 
         {/* Floating decorative element */}
-        <div className="absolute top-16 right-16 opacity-60 pointer-events-none hidden lg:block">
+        <div className="absolute top-24 right-24 pointer-events-none hidden lg:block">
           <img
             src="/ddunddun1.png"
             alt=""
-            className="w-32 h-32 object-contain animate-[float_8s_ease-in-out_infinite]"
-            style={{ filter: 'grayscale(20%) opacity(0.7)' }}
+            className="w-40 h-40 object-contain animate-[float_8s_ease-in-out_infinite]"
+            style={{ filter: 'grayscale(10%)' }}
           />
         </div>
 
@@ -87,7 +87,7 @@ export function Home() {
                 <h1 className="text-6xl md:text-8xl lg:text-9xl font-light tracking-tight text-neutral-900">
                   Art
                 </h1>
-                <h1 className="text-6xl md:text-8xl lg:text-9xl font-extralight tracking-tight text-neutral-600">
+                <h1 className="text-6xl md:text-8xl lg:text-9xl font-medium tracking-tight text-primary">
                   Lab
                 </h1>
               </div>
@@ -122,7 +122,7 @@ export function Home() {
       </section>
 
       {/* About Section - Minimal */}
-      <section className="py-24 bg-neutral-50">
+      <section className="py-24 bg-background">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="max-w-4xl mx-auto">
             <div className="grid md:grid-cols-2 gap-16 items-center">
@@ -184,7 +184,7 @@ export function Home() {
       </section>
 
       {/* Artist Note Section - Minimal */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-card">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="max-w-4xl mx-auto">
             {/* Section header */}
@@ -221,7 +221,7 @@ export function Home() {
       </section>
 
       {/* Featured Artworks Section - Gallery Style */}
-      <section className="py-24 bg-neutral-50">
+      <section className="py-24 bg-card">
         <div className="container mx-auto px-6 lg:px-12">
           {/* Minimal section header */}
           <div className="mb-20">
