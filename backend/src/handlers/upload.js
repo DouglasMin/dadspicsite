@@ -1,4 +1,5 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { randomUUID } from 'crypto';
 import { success, badRequest, internalError } from '../utils/response.js';
 
@@ -13,127 +14,70 @@ export const handler = async (event) => {
   }
 
   try {
-    // Parse multipart/form-data
-    const contentType = event.headers['content-type'] || event.headers['Content-Type'];
-    if (!contentType || !contentType.includes('multipart/form-data')) {
-      return badRequest('Content-Type must be multipart/form-data');
-    }
+    const { fileName, fileType, fileSize } = JSON.parse(event.body);
 
-    // Extract boundary from content-type
-    const boundary = contentType.split('boundary=')[1];
-    if (!boundary) {
-      return badRequest('Missing boundary in Content-Type');
-    }
-
-    // Parse the body (base64 encoded in API Gateway)
-    const body = event.isBase64Encoded
-      ? Buffer.from(event.body, 'base64')
-      : Buffer.from(event.body);
-
-    // Parse multipart data
-    const parts = parseMultipart(body, boundary);
-    const filePart = parts.find((part) => part.filename);
-
-    if (!filePart) {
-      return badRequest('No file found in request');
+    if (!fileName || !fileType) {
+      return badRequest('fileName and fileType are required');
     }
 
     // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-    if (!allowedTypes.includes(filePart.contentType)) {
-      return badRequest('Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed.');
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(fileType)) {
+      return badRequest('Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed');
     }
 
-    // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024;
-    if (filePart.data.length > maxSize) {
-      return badRequest('File size exceeds 5MB limit');
+    // Validate file size (max 10MB)
+    const maxSize = 10 * 1024 * 1024;
+    if (fileSize && fileSize > maxSize) {
+      return badRequest('File size exceeds 10MB limit');
     }
 
-    // Generate unique filename
-    const fileExtension = filePart.filename.split('.').pop();
-    const fileName = `${randomUUID()}.${fileExtension}`;
-    const key = `uploads/${fileName}`;
+    // Generate unique file name
+    const fileExtension = getFileExtension(fileType);
+    const uniqueFileName = `${randomUUID()}.${fileExtension}`;
+    const key = `artworks/${uniqueFileName}`;
 
-    // Upload to S3
-    const uploadParams = {
+    // Create presigned URL for PUT operation
+    const command = new PutObjectCommand({
       Bucket: IMAGES_BUCKET,
       Key: key,
-      Body: filePart.data,
-      ContentType: filePart.contentType,
-    };
+      ContentType: fileType,
+      // Optional: Add metadata
+      Metadata: {
+        'original-name': fileName,
+        'uploaded-at': new Date().toISOString()
+      }
+    });
 
-    const command = new PutObjectCommand(uploadParams);
-    await s3.send(command);
+    // Generate presigned URL (expires in 5 minutes)
+    const presignedUrl = await getSignedUrl(s3, command, { expiresIn: 300 });
 
-    // Return the S3 URL
-    const imageUrl = `https://${IMAGES_BUCKET}.s3.ap-northeast-2.amazonaws.com/${key}`;
+    // The final URL where the image will be accessible
+    const imageUrl = `https://${IMAGES_BUCKET}.s3.${process.env.AWS_REGION || 'ap-northeast-2'}.amazonaws.com/${key}`;
 
-    return success({ imageUrl });
+    return success({
+      presignedUrl,
+      imageUrl,
+      key
+    });
   } catch (error) {
-    console.error('Error uploading file:', error);
+    console.error('Presigned URL generation error:', error);
     return internalError(error.message);
   }
 };
 
-function parseMultipart(buffer, boundary) {
-  const parts = [];
-  const boundaryBuffer = Buffer.from(`--${boundary}`);
-  let position = 0;
-
-  while (position < buffer.length) {
-    // Find next boundary
-    const boundaryIndex = buffer.indexOf(boundaryBuffer, position);
-    if (boundaryIndex === -1) break;
-
-    position = boundaryIndex + boundaryBuffer.length;
-
-    // Skip CRLF after boundary
-    if (buffer[position] === 0x0d && buffer[position + 1] === 0x0a) {
-      position += 2;
-    }
-
-    // Check for end boundary
-    if (buffer[position] === 0x2d && buffer[position + 1] === 0x2d) {
-      break;
-    }
-
-    // Find end of headers (double CRLF)
-    const headersEnd = buffer.indexOf(Buffer.from('\r\n\r\n'), position);
-    if (headersEnd === -1) break;
-
-    // Parse headers
-    const headersBuffer = buffer.slice(position, headersEnd);
-    const headers = headersBuffer.toString('utf-8');
-    const contentDisposition = headers.match(/Content-Disposition: ([^\r\n]+)/i)?.[1];
-    const contentType = headers.match(/Content-Type: ([^\r\n]+)/i)?.[1];
-
-    const filename = contentDisposition?.match(/filename="([^"]+)"/)?.[1];
-    const name = contentDisposition?.match(/name="([^"]+)"/)?.[1];
-
-    position = headersEnd + 4;
-
-    // Find next boundary
-    const nextBoundary = buffer.indexOf(boundaryBuffer, position);
-    if (nextBoundary === -1) break;
-
-    // Extract data (remove trailing CRLF)
-    let dataEnd = nextBoundary;
-    if (buffer[dataEnd - 2] === 0x0d && buffer[dataEnd - 1] === 0x0a) {
-      dataEnd -= 2;
-    }
-
-    const data = buffer.slice(position, dataEnd);
-
-    parts.push({
-      name,
-      filename,
-      contentType: contentType || 'application/octet-stream',
-      data,
-    });
-
-    position = nextBoundary;
+function getFileExtension(contentType) {
+  switch (contentType) {
+    case 'image/jpeg':
+      return 'jpg';
+    case 'image/png':
+      return 'png';
+    case 'image/gif':
+      return 'gif';
+    case 'image/webp':
+      return 'webp';
+    default:
+      return 'jpg';
   }
-
-  return parts;
 }
+

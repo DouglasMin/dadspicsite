@@ -47,18 +47,18 @@ jobs:
       - name: Update Lambda function
         run: |
           aws lambda update-function-code \
-            --function-name dadspicsite-lambda-dev \
+            --function-name dadspicsite-api-dev \
             --image-uri ${{ steps.build-image.outputs.image }} \
             --region ${{ env.AWS_REGION }}
 
       - name: Wait for Lambda update to complete
         run: |
           aws lambda wait function-updated \
-            --function-name dadspicsite-lambda-dev \
+            --function-name dadspicsite-api-dev \
             --region ${{ env.AWS_REGION }}
 
       - name: Deployment success
         run: |
           echo "✅ Backend deployed successfully!"
-          echo "Lambda function: dadspicsite-lambda-dev"
+          echo "Lambda function: dadspicsite-api-dev"
           echo "Image: ${{ steps.build-image.outputs.image }}"
