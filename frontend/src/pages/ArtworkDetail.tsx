@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api, type Artwork } from '@/lib/api';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Loader2, Calendar, Ruler, Palette, AlertCircle, Share2, Heart } from 'lucide-react';
+import { ArrowLeft, Calendar, Ruler, Palette, AlertCircle, Share2, Heart } from 'lucide-react';
 import FsLightbox from 'fslightbox-react';
 
 export function ArtworkDetail() {

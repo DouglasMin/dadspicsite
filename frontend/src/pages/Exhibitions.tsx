@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api, type Exhibition } from '@/lib/api';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Calendar, MapPin, Clock, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Calendar, MapPin, Image as ImageIcon } from 'lucide-react';
 
 export function Exhibitions() {
   const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);

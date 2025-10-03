@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
-import { QrCode, Calendar, Mail, Palette, Eye, Users } from 'lucide-react';
+import { QrCode } from 'lucide-react';
 import { useState } from 'react';
 import FsLightbox from 'fslightbox-react';
 

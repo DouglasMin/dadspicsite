@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api, type Artwork } from '@/lib/api';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+
 import { Loader2, Image as ImageIcon, Eye } from 'lucide-react';
 import FsLightbox from 'fslightbox-react';
 
