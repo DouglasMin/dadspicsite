@@ -1,7 +1,10 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { Menu, X } from 'lucide-react';
 
 export function Layout() {
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
     { path: '/', label: '홈' },
@@ -17,13 +20,13 @@ export function Layout() {
         <div className="container mx-auto px-6 lg:px-12">
           <nav className="flex items-center justify-between h-20">
             {/* Logo/Brand - Minimal */}
-            <Link to="/" className="group flex items-center gap-4">
+            <Link to="/" className="group flex items-center gap-3">
               <img 
                 src="/yh-logo-no-background.png" 
                 alt="YH" 
-                className="h-12 w-auto transition-opacity group-hover:opacity-70"
+                className="h-10 sm:h-12 w-auto transition-opacity group-hover:opacity-70"
               />
-              <span className="text-xl font-light tracking-wide text-neutral-900 hidden sm:inline">
+              <span className="text-lg sm:text-xl font-light tracking-wide text-neutral-900">
                 Art Lab
               </span>
             </Link>
@@ -63,16 +66,58 @@ export function Layout() {
             </div>
 
             {/* Mobile Menu Button */}
-            <div className="md:hidden">
-              <Link
-                to="/admin"
-                className="text-xs font-light tracking-wider text-neutral-400 hover:text-neutral-600 transition-colors uppercase"
-              >
-                Admin
-              </Link>
-            </div>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 text-neutral-900 hover:text-neutral-600 transition-colors"
+              aria-label="메뉴"
+            >
+              {mobileMenuOpen ? (
+                <X className="size-6" />
+              ) : (
+                <Menu className="size-6" />
+              )}
+            </button>
           </nav>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-card border-t border-border">
+            <div className="container mx-auto px-6 py-6">
+              <nav className="flex flex-col gap-4">
+                {navItems.map((item) => {
+                  const isActive = location.pathname === item.path ||
+                    (item.path !== '/' && location.pathname.startsWith(item.path));
+
+                  return (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`text-base font-light tracking-wide transition-colors py-2 ${
+                        isActive
+                          ? 'text-neutral-900 font-normal'
+                          : 'text-neutral-500'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                })}
+                
+                <div className="w-full h-px bg-border my-2" />
+                
+                <Link
+                  to="/admin"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm font-light tracking-wider text-neutral-400 py-2 uppercase"
+                >
+                  Admin
+                </Link>
+              </nav>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Main Content */}

@@ -78,18 +78,20 @@ export function Home() {
 
             {/* Large, elegant heading with logo */}
             <div className="space-y-6">
-              <div className="flex items-center justify-center gap-6 md:gap-8">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 md:gap-8">
                 <img 
                   src="/yh-logo-no-background.png" 
                   alt="YH" 
-                  className="h-32 md:h-48 lg:h-56 w-auto"
+                  className="h-24 sm:h-32 md:h-48 lg:h-56 w-auto"
                 />
-                <h1 className="text-6xl md:text-8xl lg:text-9xl font-light tracking-tight text-neutral-900">
-                  Art
-                </h1>
-                <h1 className="text-6xl md:text-8xl lg:text-9xl font-medium tracking-tight text-primary">
-                  Lab
-                </h1>
+                <div className="flex items-center gap-3 sm:gap-4 md:gap-6">
+                  <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-light tracking-tight text-neutral-900">
+                    Art
+                  </h1>
+                  <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-medium tracking-tight text-primary">
+                    Lab
+                  </h1>
+                </div>
               </div>
               
               <div className="w-24 h-px bg-neutral-300 mx-auto" />
@@ -125,17 +127,17 @@ export function Home() {
       <section className="py-24 bg-background">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-16 items-center">
-              <div className="space-y-8">
+            <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
+              <div className="space-y-8 order-2 md:order-1">
                 <div>
                   <div className="w-12 h-px bg-neutral-400 mb-6" />
-                  <h2 className="text-3xl md:text-4xl font-light text-neutral-900 leading-tight">
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-light text-neutral-900 leading-tight">
                     예술과 기술의<br />
                     새로운 만남
                   </h2>
                 </div>
                 
-                <div className="space-y-6 text-neutral-600 font-light leading-relaxed">
+                <div className="space-y-6 text-neutral-600 font-light leading-relaxed text-sm sm:text-base">
                   <p>
                     YH Art Lab은 현대미술의 경계를 넓혀가는 실험적 공간입니다. 
                     전통적인 갤러리 경험에 디지털 기술을 접목하여, 
@@ -147,26 +149,26 @@ export function Home() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-6 pt-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 pt-4">
                   <Button
                     variant="ghost"
                     onClick={() => navigate('/exhibitions')}
-                    className="text-neutral-600 hover:text-neutral-900 font-light px-0"
+                    className="text-neutral-600 hover:text-neutral-900 font-light px-0 text-sm"
                   >
                     전시 일정 보기
                   </Button>
-                  <div className="w-px h-6 bg-neutral-300" />
+                  <div className="hidden sm:block w-px h-6 bg-neutral-300" />
                   <Button
                     variant="ghost"
                     onClick={() => navigate('/contact')}
-                    className="text-neutral-600 hover:text-neutral-900 font-light px-0"
+                    className="text-neutral-600 hover:text-neutral-900 font-light px-0 text-sm"
                   >
                     문의하기
                   </Button>
                 </div>
               </div>
 
-              <div className="relative">
+              <div className="relative order-1 md:order-2">
                 <div className="aspect-[4/5] bg-neutral-200 overflow-hidden">
                   <img
                     src="/ddunddun2.png"
@@ -174,8 +176,8 @@ export function Home() {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-white shadow-lg flex items-center justify-center">
-                  <QrCode className="size-8 text-neutral-400" />
+                <div className="absolute -bottom-3 -right-3 md:-bottom-4 md:-right-4 w-20 h-20 md:w-24 md:h-24 bg-white shadow-lg flex items-center justify-center">
+                  <QrCode className="size-6 md:size-8 text-neutral-400" />
                 </div>
               </div>
             </div>

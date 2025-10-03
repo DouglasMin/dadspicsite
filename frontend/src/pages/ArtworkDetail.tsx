@@ -67,13 +67,13 @@ export function ArtworkDetail() {
       </div>
 
       {/* Artwork Detail */}
-      <section className="py-12">
+      <section className="py-8 md:py-12">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="max-w-6xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-16 items-start">
+            <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-start">
               {/* Image */}
               <div className="relative">
-                <div className="aspect-[3/4] bg-neutral-100 overflow-hidden">
+                <div className="aspect-[3/4] md:aspect-[3/4] bg-neutral-100 overflow-hidden">
                   {artwork.imageUrl ? (
                     <img
                       src={artwork.imageUrl}
@@ -82,40 +82,40 @@ export function ArtworkDetail() {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Palette className="size-16 text-neutral-300" />
+                      <Palette className="size-12 md:size-16 text-neutral-300" />
                     </div>
                   )}
                 </div>
               </div>
 
               {/* Content */}
-              <div className="space-y-8">
+              <div className="space-y-6 md:space-y-8">
                 <div>
-                  <div className="w-12 h-px bg-neutral-300 mb-6" />
-                  <h1 className="text-4xl md:text-5xl font-light text-neutral-900 tracking-tight mb-6">
+                  <div className="w-12 h-px bg-neutral-300 mb-4 md:mb-6" />
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-light text-neutral-900 tracking-tight mb-4 md:mb-6">
                     {artwork.title}
                   </h1>
                 </div>
 
                 {/* Metadata */}
-                <div className="space-y-4">
+                <div className="space-y-3 md:space-y-4">
                   {artwork.year && (
-                    <div className="flex items-center gap-3 text-neutral-700">
-                      <Calendar className="size-5 text-neutral-400" />
+                    <div className="flex items-center gap-3 text-neutral-700 text-sm md:text-base">
+                      <Calendar className="size-4 md:size-5 text-neutral-400 shrink-0" />
                       <span className="font-light">{artwork.year}</span>
                     </div>
                   )}
                   
                   {artwork.medium && (
-                    <div className="flex items-center gap-3 text-neutral-700">
-                      <Palette className="size-5 text-neutral-400" />
+                    <div className="flex items-center gap-3 text-neutral-700 text-sm md:text-base">
+                      <Palette className="size-4 md:size-5 text-neutral-400 shrink-0" />
                       <span className="font-light">{artwork.medium}</span>
                     </div>
                   )}
                   
                   {artwork.dimensions && (
-                    <div className="flex items-center gap-3 text-neutral-700">
-                      <Ruler className="size-5 text-neutral-400" />
+                    <div className="flex items-center gap-3 text-neutral-700 text-sm md:text-base">
+                      <Ruler className="size-4 md:size-5 text-neutral-400 shrink-0" />
                       <span className="font-light">{artwork.dimensions}</span>
                     </div>
                   )}
@@ -125,11 +125,11 @@ export function ArtworkDetail() {
 
                 {/* Description */}
                 {artwork.description && (
-                  <div className="space-y-4">
-                    <h2 className="text-xl font-light text-neutral-900 tracking-wide">
+                  <div className="space-y-3 md:space-y-4">
+                    <h2 className="text-lg md:text-xl font-light text-neutral-900 tracking-wide">
                       작품 설명
                     </h2>
-                    <p className="text-base text-neutral-700 font-light leading-relaxed whitespace-pre-wrap">
+                    <p className="text-sm md:text-base text-neutral-700 font-light leading-relaxed whitespace-pre-wrap">
                       {artwork.description}
                     </p>
                   </div>

@@ -179,9 +179,9 @@ function ExhibitionCard({
 }) {
   return (
     <div className={`transition-all duration-500 ${status === 'past' ? 'opacity-60 hover:opacity-100' : ''}`}>
-      <div className="grid md:grid-cols-[1fr_1.2fr] gap-12 items-start">
+      <div className="grid md:grid-cols-[1fr_1.2fr] gap-8 md:gap-12 items-start">
         {/* Image */}
-        <div className="relative">
+        <div className="relative order-1">
           {exhibition.imageUrl ? (
             <div className="relative aspect-[4/3] overflow-hidden bg-neutral-100">
               <img
@@ -214,24 +214,24 @@ function ExhibitionCard({
         </div>
 
         {/* Content */}
-        <div className="space-y-8">
-          <div className="space-y-6">
+        <div className="space-y-6 md:space-y-8 order-2">
+          <div className="space-y-4 md:space-y-6">
             <div>
-              <h3 className="text-3xl md:text-4xl font-light text-neutral-900 leading-tight mb-4">
+              <h3 className="text-2xl sm:text-3xl md:text-4xl font-light text-neutral-900 leading-tight mb-3 md:mb-4">
                 {exhibition.title}
               </h3>
-              <div className="w-16 h-px bg-neutral-300 mb-6" />
+              <div className="w-12 md:w-16 h-px bg-neutral-300 mb-4 md:mb-6" />
             </div>
 
             {/* Meta Information */}
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               <div className="flex items-start gap-3">
                 <Calendar className="size-4 text-neutral-500 mt-1 shrink-0" />
                 <div className="space-y-1">
                   <p className="text-xs font-light tracking-wide uppercase text-neutral-500">
                     Exhibition Period
                   </p>
-                  <p className="text-base font-light text-neutral-900">
+                  <p className="text-sm md:text-base font-light text-neutral-900">
                     {new Date(exhibition.startDate).toLocaleDateString('ko-KR', {
                       year: 'numeric',
                       month: 'long',
@@ -253,7 +253,7 @@ function ExhibitionCard({
                   <p className="text-xs font-light tracking-wide uppercase text-neutral-500">
                     Location
                   </p>
-                  <p className="text-base font-light text-neutral-900">
+                  <p className="text-sm md:text-base font-light text-neutral-900">
                     {exhibition.location}
                   </p>
                 </div>
@@ -262,9 +262,9 @@ function ExhibitionCard({
           </div>
 
           {/* Description */}
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             <div className="w-12 h-px bg-neutral-300" />
-            <p className="text-base text-neutral-700 font-light leading-relaxed whitespace-pre-line">
+            <p className="text-sm md:text-base text-neutral-700 font-light leading-relaxed whitespace-pre-line">
               {exhibition.description}
             </p>
           </div>

@@ -74,9 +74,9 @@ export function Contact() {
         </div>
 
         <div className="container mx-auto px-6 lg:px-12 relative z-10">
-          <div className="grid lg:grid-cols-[1fr_1.2fr] gap-16 max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-16 max-w-6xl mx-auto">
             {/* Contact Info */}
-            <div className="space-y-12">
+            <div className="space-y-8 md:space-y-12">
               <div className="space-y-6">
                 <div className="w-12 h-px bg-neutral-300" />
                 <h2 className="text-2xl md:text-3xl font-light text-neutral-900 tracking-wide">
@@ -157,8 +157,8 @@ export function Contact() {
             </div>
 
             {/* Contact Form */}
-            <div className="bg-neutral-50 p-8 lg:p-12">
-              <div className="space-y-8">
+            <div className="bg-neutral-50 p-6 sm:p-8 lg:p-12">
+              <div className="space-y-6 md:space-y-8">
                 <div className="space-y-4">
                   <div className="w-12 h-px bg-neutral-300" />
                   <h2 className="text-2xl md:text-3xl font-light text-neutral-900 tracking-wide">
