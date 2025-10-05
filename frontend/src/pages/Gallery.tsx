@@ -27,7 +27,7 @@ export function Gallery() {
         const data = await api.getArtworks();
         setArtworks(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error('작품을 불러오는데 실패했습니다:', err);
+        console.error('작품을 불러오는데 실패했습니다!:', err);
         setArtworks([]);
       } finally {
         setLoading(false);
