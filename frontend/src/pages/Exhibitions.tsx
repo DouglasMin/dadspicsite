@@ -11,10 +11,20 @@ export function Exhibitions() {
       try {
         const data = await api.getExhibitions();
         if (Array.isArray(data)) {
-          // Sort by start date (newest first)
-          const sorted = data.sort((a, b) =>
-            new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-          );
+          // Sort by start date (earliest first for upcoming, latest first for past)
+          const sorted = data.sort((a, b) => {
+            const now = new Date();
+            const aStart = new Date(a.startDate);
+            const bStart = new Date(b.startDate);
+            
+            // Both upcoming: sort by earliest first
+            if (aStart > now && bStart > now) {
+              return aStart.getTime() - bStart.getTime();
+            }
+            
+            // Both past or ongoing: sort by latest first
+            return bStart.getTime() - aStart.getTime();
+          });
           setExhibitions(sorted);
         } else {
           setExhibitions([]);
@@ -194,7 +204,7 @@ function ExhibitionCard({
               {status === 'ongoing' && (
                 <div className="absolute top-6 left-6">
                   <div className="px-4 py-2 bg-neutral-900 text-white text-xs font-light tracking-wide uppercase">
-                    Now Showing
+                    전시회 진행중
                   </div>
                 </div>
               )}
@@ -202,6 +212,13 @@ function ExhibitionCard({
                 <div className="absolute top-6 left-6">
                   <div className="px-4 py-2 bg-neutral-600 text-white text-xs font-light tracking-wide uppercase">
                     Coming Soon
+                  </div>
+                </div>
+              )}
+              {status === 'past' && (
+                <div className="absolute top-6 left-6">
+                  <div className="px-4 py-2 bg-neutral-400 text-white text-xs font-light tracking-wide uppercase">
+                    마감된 전시회
                   </div>
                 </div>
               )}

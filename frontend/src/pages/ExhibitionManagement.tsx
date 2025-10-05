@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import { LocationPicker } from '@/components/LocationPicker';
 import { getIdToken } from '@/lib/auth';
 import { api, type Exhibition, type Artwork } from '@/lib/api';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
@@ -274,7 +275,7 @@ export function ExhibitionManagement() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-3">
                     <Label htmlFor="startDate" className="text-xs font-light tracking-wide uppercase text-neutral-500">
                       시작일 *
@@ -301,20 +302,13 @@ export function ExhibitionManagement() {
                       className="h-12 border-neutral-300 bg-white font-light focus:border-neutral-900 focus:ring-0"
                     />
                   </div>
-                  <div className="space-y-3">
-                    <Label htmlFor="location" className="text-xs font-light tracking-wide uppercase text-neutral-500">
-                      장소 *
-                    </Label>
-                    <Input
-                      id="location"
-                      value={formData.location}
-                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                      placeholder="예: YH Art Gallery"
-                      required
-                      className="h-12 border-neutral-300 bg-white font-light focus:border-neutral-900 focus:ring-0"
-                    />
-                  </div>
                 </div>
+
+                <LocationPicker
+                  value={formData.location}
+                  onChange={(location) => setFormData({ ...formData, location })}
+                  clientId={import.meta.env.VITE_NAVER_MAP_CLIENT_ID || ''}
+                />
 
                 <div className="space-y-3">
                   <Label htmlFor="image" className="text-xs font-light tracking-wide uppercase text-neutral-500">
