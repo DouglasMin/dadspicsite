@@ -95,10 +95,10 @@ export function Gallery() {
                         alt={artwork.title}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
-                      
+
                       {/* Subtle overlay */}
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-500" />
-                      
+
                       {/* Action button */}
                       <button
                         onClick={(e) => {

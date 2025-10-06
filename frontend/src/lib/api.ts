@@ -176,6 +176,11 @@ class ApiClient {
     }
   }
 
+  // Search locations (place names and addresses)
+  async searchLocations(query: string): Promise<any[]> {
+    return this.request<any[]>(`/locations/search?q=${encodeURIComponent(query)}`);
+  }
+
   // Complete image upload process
   async uploadImage(file: File): Promise<{ imageUrl: string }> {
     // Step 1: Get presigned URL

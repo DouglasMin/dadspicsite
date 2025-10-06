@@ -4,6 +4,7 @@ import { handler as artworksHandler } from './handlers/artworks.js';
 import { handler as exhibitionsHandler } from './handlers/exhibitions.js';
 import { handler as contactHandler } from './handlers/contact.js';
 import { handler as uploadHandler } from './handlers/upload.js';
+import { searchLocation } from './handlers/location.js';
 
 export const handler = async (event, context) => {
   console.log('Received event:', JSON.stringify(event, null, 2));
@@ -31,6 +32,11 @@ export const handler = async (event, context) => {
 
     if (path === '/upload' || path === '/dev/upload') {
       return await uploadHandler(event, context);
+    }
+
+    if (path === '/locations/search' || path === '/dev/locations/search') {
+      const query = event.queryStringParameters?.q || '';
+      return await searchLocation(query);
     }
 
     // Not found

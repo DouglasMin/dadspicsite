@@ -133,47 +133,89 @@ export function LocationPicker({ value, onChange, clientId }: LocationPickerProp
     );
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (!searchQuery.trim()) return;
     
-    if (!window.naver || !window.naver.maps || !window.naver.maps.Service) {
-      alert('네이버 지도 API를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
-      return;
-    }
-
     setIsSearching(true);
-    
-    window.naver.maps.Service.geocode(
-      {
-        query: searchQuery,
-      },
-      (status: any, response: any) => {
-        setIsSearching(false);
+    setSearchResults([]);
 
-        if (status !== window.naver.maps.Service.Status.OK) {
-          alert('검색 결과가 없습니다.');
-          return;
-        }
+    try {
+      // 1단계: 장소명 검색 시도 (백엔드 API)
+      const { api } = await import('@/lib/api');
+      const placeResults = await api.searchLocations(searchQuery);
 
-        const result = response.v2;
-        const items = result.addresses;
-
-        if (items.length === 0) {
-          alert('검색 결과가 없습니다.');
-          return;
-        }
-
-        setSearchResults(items);
-
+      if (placeResults && placeResults.length > 0) {
+        // 장소명 검색 성공
+        const formattedResults = placeResults.map((item: any) => ({
+          title: item.title,
+          roadAddress: item.roadAddress,
+          jibunAddress: item.address,
+          x: (parseFloat(item.mapx) / 10000000).toString(),
+          y: (parseFloat(item.mapy) / 10000000).toString(),
+        }));
+        
+        setSearchResults(formattedResults);
+        
         // 첫 번째 결과로 지도 이동
-        if (items[0]) {
-          const latlng = new window.naver.maps.LatLng(items[0].y, items[0].x);
+        if (formattedResults[0] && window.naver && window.naver.maps) {
+          const latlng = new window.naver.maps.LatLng(
+            parseFloat(formattedResults[0].y),
+            parseFloat(formattedResults[0].x)
+          );
           updateMarker(latlng);
-          setSelectedLocation(items[0].roadAddress || items[0].jibunAddress);
-          setSelectedCoords({ lat: parseFloat(items[0].y), lng: parseFloat(items[0].x) });
+          setSelectedLocation(formattedResults[0].roadAddress || formattedResults[0].jibunAddress);
+          setSelectedCoords({
+            lat: parseFloat(formattedResults[0].y),
+            lng: parseFloat(formattedResults[0].x),
+          });
         }
+        setIsSearching(false);
+        return;
       }
-    );
+
+      // 2단계: 주소 검색 시도 (Geocoding API)
+      if (!window.naver || !window.naver.maps || !window.naver.maps.Service) {
+        alert('네이버 지도 API를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+        setIsSearching(false);
+        return;
+      }
+
+      window.naver.maps.Service.geocode(
+        {
+          query: searchQuery,
+        },
+        (status: any, response: any) => {
+          setIsSearching(false);
+
+          if (status !== window.naver.maps.Service.Status.OK) {
+            alert('검색 결과가 없습니다.');
+            return;
+          }
+
+          const result = response.v2;
+          const items = result.addresses;
+
+          if (items.length === 0) {
+            alert('검색 결과가 없습니다.');
+            return;
+          }
+
+          setSearchResults(items);
+
+          // 첫 번째 결과로 지도 이동
+          if (items[0]) {
+            const latlng = new window.naver.maps.LatLng(items[0].y, items[0].x);
+            updateMarker(latlng);
+            setSelectedLocation(items[0].roadAddress || items[0].jibunAddress);
+            setSelectedCoords({ lat: parseFloat(items[0].y), lng: parseFloat(items[0].x) });
+          }
+        }
+      );
+    } catch (error) {
+      console.error('검색 중 오류:', error);
+      setIsSearching(false);
+      alert('검색 중 오류가 발생했습니다.');
+    }
   };
 
   const handleSelectResult = (item: any) => {
@@ -270,10 +312,15 @@ export function LocationPicker({ value, onChange, clientId }: LocationPickerProp
                     onClick={() => handleSelectResult(item)}
                     className="w-full text-left px-4 py-3 hover:bg-neutral-50 border-b border-neutral-100 last:border-0 transition-colors"
                   >
-                    <div className="font-medium text-sm">
+                    {item.title && (
+                      <div className="font-medium text-sm mb-1">
+                        {item.title}
+                      </div>
+                    )}
+                    <div className={item.title ? "text-xs text-neutral-600" : "font-medium text-sm"}>
                       {item.roadAddress || item.jibunAddress}
                     </div>
-                    {item.roadAddress && item.jibunAddress && (
+                    {item.roadAddress && item.jibunAddress && !item.title && (
                       <div className="text-xs text-neutral-500 mt-1">
                         지번: {item.jibunAddress}
                       </div>
