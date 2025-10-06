@@ -21,3 +21,15 @@ variable "lambda_image_uri" {
   type        = string
   default     = ""
 }
+
+variable "naver_client_id" {
+  description = "Naver Maps API Client ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "naver_client_secret" {
+  description = "Naver Maps API Client Secret"
+  type        = string
+  sensitive   = true
+}

@@ -66,6 +66,20 @@ resource "aws_api_gateway_resource" "upload" {
   path_part   = "upload"
 }
 
+# /locations resource
+resource "aws_api_gateway_resource" "locations" {
+  rest_api_id = aws_api_gateway_rest_api.this.id
+  parent_id   = aws_api_gateway_rest_api.this.root_resource_id
+  path_part   = "locations"
+}
+
+# /locations/search resource
+resource "aws_api_gateway_resource" "locations_search" {
+  rest_api_id = aws_api_gateway_rest_api.this.id
+  parent_id   = aws_api_gateway_resource.locations.id
+  path_part   = "search"
+}
+
 # GET /health (no auth)
 resource "aws_api_gateway_method" "health_get" {
   rest_api_id   = aws_api_gateway_rest_api.this.id
@@ -83,7 +97,61 @@ resource "aws_api_gateway_integration" "health_get" {
   uri                     = var.lambda_invoke_arn
 }
 
-# CORS for all resources
+# CORS OPTIONS method for locations/search
+resource "aws_api_gateway_method" "locations_search_options" {
+  rest_api_id   = aws_api_gateway_rest_api.this.id
+  resource_id   = aws_api_gateway_resource.locations_search.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "locations_search_options" {
+  rest_api_id = aws_api_gateway_rest_api.this.id
+  resource_id = aws_api_gateway_resource.locations_search.id
+  http_method = aws_api_gateway_method.locations_search_options.http_method
+  type        = "MOCK"
+
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+resource "aws_api_gateway_method_response" "locations_search_options" {
+  rest_api_id = aws_api_gateway_rest_api.this.id
+  resource_id = aws_api_gateway_resource.locations_search.id
+  http_method = aws_api_gateway_method.locations_search_options.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
+  }
+
+  response_models = {
+    "application/json" = "Empty"
+  }
+}
+
+resource "aws_api_gateway_integration_response" "locations_search_options" {
+  rest_api_id = aws_api_gateway_rest_api.this.id
+  resource_id = aws_api_gateway_resource.locations_search.id
+  http_method = aws_api_gateway_method.locations_search_options.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT,DELETE'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.locations_search_options,
+    aws_api_gateway_method_response.locations_search_options
+  ]
+}
+
+# CORS for all existing resources
 resource "aws_api_gateway_method" "options" {
   for_each = toset([
     aws_api_gateway_resource.artworks.id,
@@ -170,6 +238,7 @@ resource "aws_api_gateway_deployment" "this" {
       aws_api_gateway_resource.contact.id,
       aws_api_gateway_resource.health.id,
       aws_api_gateway_resource.upload.id,
+      aws_api_gateway_resource.locations_search.id,
       aws_api_gateway_method.health_get.id,
       aws_api_gateway_integration.health_get.id,
     ]))
@@ -194,6 +263,8 @@ resource "aws_api_gateway_deployment" "this" {
     aws_api_gateway_method.exhibition_id_delete,
     aws_api_gateway_method.contact_post,
     aws_api_gateway_method.upload_post,
+    aws_api_gateway_method.locations_search_get,
+    aws_api_gateway_method.locations_search_options,
   ]
 }
 

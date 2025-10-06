@@ -202,3 +202,24 @@ resource "aws_api_gateway_integration" "upload_post" {
   type                    = "AWS_PROXY"
   uri                     = var.lambda_invoke_arn
 }
+
+# GET /locations/search (no auth - public search)
+resource "aws_api_gateway_method" "locations_search_get" {
+  rest_api_id   = aws_api_gateway_rest_api.this.id
+  resource_id   = aws_api_gateway_resource.locations_search.id
+  http_method   = "GET"
+  authorization = "NONE"
+
+  request_parameters = {
+    "method.request.querystring.q" = false
+  }
+}
+
+resource "aws_api_gateway_integration" "locations_search_get" {
+  rest_api_id             = aws_api_gateway_rest_api.this.id
+  resource_id             = aws_api_gateway_resource.locations_search.id
+  http_method             = aws_api_gateway_method.locations_search_get.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = var.lambda_invoke_arn
+}

@@ -83,7 +83,9 @@ module "lambda" {
   images_bucket_name     = module.s3.images_bucket_name
 
   environment_variables = {
-    NODE_ENV = var.environment
+    NODE_ENV              = var.environment
+    NAVER_CLIENT_ID       = var.naver_client_id
+    NAVER_CLIENT_SECRET   = var.naver_client_secret
   }
 
   tags = local.common_tags
