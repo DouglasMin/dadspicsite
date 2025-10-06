@@ -1,10 +1,10 @@
-const { success, badRequest } = require('../utils/response');
+import { success, badRequest } from '../utils/response.js';
 
 /**
  * 네이버 지역 검색 API를 사용하여 장소 검색
  * 장소명으로 검색 가능 (예: "원천교회", "스타벅스 강남점")
  */
-async function searchLocation(query) {
+export async function searchLocation(query) {
   if (!query || query.trim().length === 0) {
     return badRequest('검색어를 입력해주세요.');
   }
@@ -51,7 +51,3 @@ async function searchLocation(query) {
     return success([]);
   }
 }
-
-module.exports = {
-  searchLocation,
-};
