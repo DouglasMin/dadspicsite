@@ -13,7 +13,7 @@ interface LocationPickerProps {
 
 declare global {
   interface Window {
-    naver: any;
+    kakao: any;
   }
 }
 
@@ -29,64 +29,73 @@ export function LocationPicker({ value, onChange, clientId }: LocationPickerProp
   const mapInstanceRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
 
-  // 네이버 지도 스크립트 로드
+  // 카카오 지도 스크립트 로드
   useEffect(() => {
     if (!isMapOpen) return;
 
-    const scriptId = 'naver-maps-script';
-    if (document.getElementById(scriptId)) {
-      // 스크립트는 이미 로드됨, 지도만 다시 초기화
-      setTimeout(() => initializeMap(), 100);
+    const scriptId = 'kakao-maps-script';
+    const existingScript = document.getElementById(scriptId);
+    
+    if (existingScript) {
+      // 스크립트는 이미 로드됨
+      if (window.kakao && window.kakao.maps) {
+        // 이미 로드 완료
+        setTimeout(() => initializeMap(), 100);
+      } else {
+        // 로드 중
+        existingScript.addEventListener('load', () => {
+          window.kakao.maps.load(() => initializeMap());
+        });
+      }
       return;
     }
 
+    // 새로 스크립트 로드
     const script = document.createElement('script');
     script.id = scriptId;
-    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${clientId}&submodules=geocoder`;
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${clientId}&libraries=services&autoload=false`;
     script.async = true;
-    script.onload = () => initializeMap();
+    script.onload = () => {
+      window.kakao.maps.load(() => initializeMap());
+    };
+    script.onerror = () => {
+      console.error('카카오 지도 스크립트 로드 실패');
+      alert('카카오 지도를 불러올 수 없습니다. 네트워크 연결을 확인해주세요.');
+    };
     document.head.appendChild(script);
   }, [isMapOpen, clientId]);
 
   const initializeMap = () => {
-    if (!window.naver || !window.naver.maps || !mapRef.current) {
-      console.error('네이버 지도 API 로딩 실패');
+    if (!window.kakao || !window.kakao.maps || !mapRef.current) {
+      console.error('카카오 지도 API 로딩 실패');
       return;
     }
 
     try {
-      // 기존 지도 인스턴스가 있으면 제거
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.destroy();
-        mapInstanceRef.current = null;
-      }
-
       // 기존 마커가 있으면 제거
       if (markerRef.current) {
         markerRef.current.setMap(null);
         markerRef.current = null;
       }
 
-      const defaultCenter = new window.naver.maps.LatLng(37.5665, 126.9780); // 서울 시청
+      const defaultCenter = new window.kakao.maps.LatLng(37.5665, 126.9780); // 서울 시청
       
-      mapInstanceRef.current = new window.naver.maps.Map(mapRef.current, {
+      const mapOption = {
         center: defaultCenter,
-        zoom: 15,
-        zoomControl: true,
-        zoomControlOptions: {
-          position: window.naver.maps.Position.TOP_RIGHT,
-        },
-      });
+        level: 3, // 확대 레벨
+      };
+
+      mapInstanceRef.current = new window.kakao.maps.Map(mapRef.current, mapOption);
 
       // 지도 클릭 이벤트
-      window.naver.maps.Event.addListener(mapInstanceRef.current, 'click', (e: any) => {
-        const latlng = e.coord;
+      window.kakao.maps.event.addListener(mapInstanceRef.current, 'click', (mouseEvent: any) => {
+        const latlng = mouseEvent.latLng;
         updateMarker(latlng);
         reverseGeocode(latlng);
       });
     } catch (error) {
       console.error('지도 초기화 실패:', error);
-      alert('지도를 불러오는데 실패했습니다. 네이버 클라우드 플랫폼에서 Web 서비스 URL을 확인해주세요.');
+      alert('지도를 불러오는데 실패했습니다. 카카오 개발자 콘솔에서 Web 플랫폼을 등록해주세요.');
     }
   };
 
@@ -95,7 +104,7 @@ export function LocationPicker({ value, onChange, clientId }: LocationPickerProp
       markerRef.current.setMap(null);
     }
 
-    markerRef.current = new window.naver.maps.Marker({
+    markerRef.current = new window.kakao.maps.Marker({
       position: latlng,
       map: mapInstanceRef.current,
     });
@@ -104,122 +113,94 @@ export function LocationPicker({ value, onChange, clientId }: LocationPickerProp
   };
 
   const reverseGeocode = (latlng: any) => {
-    if (!window.naver || !window.naver.maps || !window.naver.maps.Service) {
-      alert('네이버 지도 API를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+    if (!window.kakao || !window.kakao.maps || !window.kakao.maps.services) {
+      alert('카카오 지도 API를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
       return;
     }
 
-    window.naver.maps.Service.reverseGeocode(
-      {
-        coords: latlng,
-        orders: [
-          window.naver.maps.Service.OrderType.ADDR,
-          window.naver.maps.Service.OrderType.ROAD_ADDR,
-        ].join(','),
-      },
-      (status: any, response: any) => {
-        if (status !== window.naver.maps.Service.Status.OK) {
-          alert('주소를 가져올 수 없습니다.');
-          return;
-        }
+    const geocoder = new window.kakao.maps.services.Geocoder();
 
-        const result = response.v2;
-        const address = result.address;
-        const roadAddress = address.roadAddress || address.jibunAddress;
+    geocoder.coord2Address(latlng.getLng(), latlng.getLat(), (result: any, status: any) => {
+      if (status === window.kakao.maps.services.Status.OK) {
+        const address = result[0].road_address 
+          ? result[0].road_address.address_name 
+          : result[0].address.address_name;
 
-        setSelectedLocation(roadAddress);
-        setSelectedCoords({ lat: latlng.y, lng: latlng.x });
+        setSelectedLocation(address);
+        setSelectedCoords({ lat: latlng.getLat(), lng: latlng.getLng() });
+      } else {
+        alert('주소를 가져올 수 없습니다.');
       }
-    );
+    });
   };
 
-  const handleSearch = async () => {
+  const handleSearch = () => {
     if (!searchQuery.trim()) return;
     
+    if (!window.kakao || !window.kakao.maps || !window.kakao.maps.services) {
+      console.error('카카오 API 상태:', {
+        kakao: !!window.kakao,
+        maps: !!(window.kakao && window.kakao.maps),
+        services: !!(window.kakao && window.kakao.maps && window.kakao.maps.services)
+      });
+      alert('카카오 지도 API를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+
     setIsSearching(true);
     setSearchResults([]);
 
     try {
-      // 1단계: 장소명 검색 시도 (백엔드 API)
-      const { api } = await import('@/lib/api');
-      const placeResults = await api.searchLocations(searchQuery);
+      // 카카오 장소 검색 서비스
+      const ps = new window.kakao.maps.services.Places();
 
-      if (placeResults && placeResults.length > 0) {
-        // 장소명 검색 성공
-        const formattedResults = placeResults.map((item: any) => ({
-          title: item.title,
-          roadAddress: item.roadAddress,
-          jibunAddress: item.address,
-          x: (parseFloat(item.mapx) / 10000000).toString(),
-          y: (parseFloat(item.mapy) / 10000000).toString(),
-        }));
-        
-        setSearchResults(formattedResults);
-        
-        // 첫 번째 결과로 지도 이동
-        if (formattedResults[0] && window.naver && window.naver.maps) {
-          const latlng = new window.naver.maps.LatLng(
-            parseFloat(formattedResults[0].y),
-            parseFloat(formattedResults[0].x)
-          );
-          updateMarker(latlng);
-          setSelectedLocation(formattedResults[0].roadAddress || formattedResults[0].jibunAddress);
-          setSelectedCoords({
-            lat: parseFloat(formattedResults[0].y),
-            lng: parseFloat(formattedResults[0].x),
-          });
-        }
+      ps.keywordSearch(searchQuery, (data: any, status: any) => {
         setIsSearching(false);
-        return;
-      }
 
-      // 2단계: 주소 검색 시도 (Geocoding API)
-      if (!window.naver || !window.naver.maps || !window.naver.maps.Service) {
-        alert('네이버 지도 API를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
-        setIsSearching(false);
-        return;
-      }
+        if (status === window.kakao.maps.services.Status.OK) {
+          // 검색 결과를 통일된 형식으로 변환
+          const formattedResults = data.map((item: any) => ({
+            title: item.place_name,
+            roadAddress: item.road_address_name || item.address_name,
+            jibunAddress: item.address_name,
+            x: item.x,
+            y: item.y,
+          }));
 
-      window.naver.maps.Service.geocode(
-        {
-          query: searchQuery,
-        },
-        (status: any, response: any) => {
-          setIsSearching(false);
-
-          if (status !== window.naver.maps.Service.Status.OK) {
-            alert('검색 결과가 없습니다.');
-            return;
-          }
-
-          const result = response.v2;
-          const items = result.addresses;
-
-          if (items.length === 0) {
-            alert('검색 결과가 없습니다.');
-            return;
-          }
-
-          setSearchResults(items);
+          setSearchResults(formattedResults);
 
           // 첫 번째 결과로 지도 이동
-          if (items[0]) {
-            const latlng = new window.naver.maps.LatLng(items[0].y, items[0].x);
+          if (formattedResults[0] && mapInstanceRef.current) {
+            const latlng = new window.kakao.maps.LatLng(
+              parseFloat(formattedResults[0].y),
+              parseFloat(formattedResults[0].x)
+            );
             updateMarker(latlng);
-            setSelectedLocation(items[0].roadAddress || items[0].jibunAddress);
-            setSelectedCoords({ lat: parseFloat(items[0].y), lng: parseFloat(items[0].x) });
+            setSelectedLocation(formattedResults[0].roadAddress || formattedResults[0].jibunAddress);
+            setSelectedCoords({
+              lat: parseFloat(formattedResults[0].y),
+              lng: parseFloat(formattedResults[0].x),
+            });
           }
+        } else if (status === window.kakao.maps.services.Status.ZERO_RESULT) {
+          alert('검색 결과가 없습니다.');
+        } else if (status === window.kakao.maps.services.Status.ERROR) {
+          console.error('카카오 검색 API 에러');
+          alert('검색 중 오류가 발생했습니다. API 키와 플랫폼 설정을 확인해주세요.');
+        } else {
+          console.error('알 수 없는 상태:', status);
+          alert('검색 중 오류가 발생했습니다.');
         }
-      );
+      });
     } catch (error) {
-      console.error('검색 중 오류:', error);
+      console.error('검색 중 예외 발생:', error);
       setIsSearching(false);
       alert('검색 중 오류가 발생했습니다.');
     }
   };
 
   const handleSelectResult = (item: any) => {
-    const latlng = new window.naver.maps.LatLng(item.y, item.x);
+    const latlng = new window.kakao.maps.LatLng(parseFloat(item.y), parseFloat(item.x));
     updateMarker(latlng);
     setSelectedLocation(item.roadAddress || item.jibunAddress);
     setSelectedCoords({ lat: parseFloat(item.y), lng: parseFloat(item.x) });

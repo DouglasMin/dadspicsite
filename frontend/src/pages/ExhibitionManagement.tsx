@@ -307,7 +307,7 @@ export function ExhibitionManagement() {
                 <LocationPicker
                   value={formData.location}
                   onChange={(location) => setFormData({ ...formData, location })}
-                  clientId={import.meta.env.VITE_NAVER_MAP_CLIENT_ID || ''}
+                  clientId={import.meta.env.VITE_KAKAO_MAP_CLIENT_ID || ''}
                 />
 
                 <div className="space-y-3">

@@ -83,7 +83,7 @@ export function Contact() {
                   Get in Touch
                 </h2>
                 <p className="text-base text-neutral-600 font-light leading-relaxed">
-                  작품 구매, 전시 협력, 또는 기타 문의사항이 있으시면<br />
+                  작품 전시 협력, 대여 등의 문의사항이 있으시면<br />
                   아래 연락처로 편하게 연락주세요.
                 </p>
               </div>
@@ -97,10 +97,10 @@ export function Contact() {
                     </span>
                   </div>
                   <a
-                    href="mailto:info@yhartlab.com"
+                    href="mailto:hildamin1218@gmail.com"
                     className="text-lg font-light text-neutral-900 hover:text-neutral-600 transition-colors block"
                   >
-                    info@yhartlab.com
+                    hildamin1218@gmail.com
                   </a>
                 </div>
 
@@ -112,10 +112,10 @@ export function Contact() {
                     </span>
                   </div>
                   <a
-                    href="tel:+82-10-1234-5678"
+                    href="tel:+82-10-2711-1115"
                     className="text-lg font-light text-neutral-900 hover:text-neutral-600 transition-colors block"
                   >
-                    +82 10-1234-5678
+                    +82 10-2711-1115
                   </a>
                 </div>
 
