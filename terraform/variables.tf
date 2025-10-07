@@ -33,3 +33,9 @@ variable "naver_client_secret" {
   type        = string
   sensitive   = true
 }
+
+variable "kakao_javascript_key" {
+  description = "Kakao Maps JavaScript API Key"
+  type        = string
+  sensitive   = true
+}

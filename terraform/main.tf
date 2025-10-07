@@ -86,6 +86,7 @@ module "lambda" {
     NODE_ENV              = var.environment
     NAVER_CLIENT_ID       = var.naver_client_id
     NAVER_CLIENT_SECRET   = var.naver_client_secret
+    KAKAO_JAVASCRIPT_KEY  = var.kakao_javascript_key
   }
 
   tags = local.common_tags
