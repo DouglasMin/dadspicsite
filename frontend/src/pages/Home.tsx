@@ -7,7 +7,7 @@ import { api, type Artwork } from '@/lib/api';
 
 export function Home() {
   const navigate = useNavigate();
-  const [lightboxController, setLightboxController] = useState({
+  const [lightboxController, _setLightboxController] = useState({
     toggler: false,
     slide: 1
   });
@@ -35,12 +35,12 @@ export function Home() {
     fetchFeaturedArtworks();
   }, []);
 
-  const openLightboxOnSlide = (number: number) => {
-    setLightboxController({
-      toggler: !lightboxController.toggler,
-      slide: number
-    });
-  };
+  // const openLightboxOnSlide = (number: number) => {
+  //   setLightboxController({
+  //     toggler: !lightboxController.toggler,
+  //     slide: number
+  //   });
+  // };
 
   return (
     <div className="min-h-screen bg-background">
