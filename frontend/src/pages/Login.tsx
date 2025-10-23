@@ -95,13 +95,12 @@ export function Login() {
         <div className="container mx-auto px-4 lg:px-6">
           <nav className="flex items-center justify-between h-16">
             {/* 로고 */}
-            <Link to="/" className="flex items-center gap-3 group">
-              <div className="relative">
-                <Palette className="size-6 text-primary transition-transform group-hover:rotate-12" />
-              </div>
-              <span className="text-lg font-bold tracking-tight text-foreground">
-                YH Art Lab
-              </span>
+            <Link to="/" className="group">
+              <img 
+                src="/yh-art-lab-logo.png" 
+                alt="YH Art Lab" 
+                className="h-8 w-auto transition-opacity group-hover:opacity-70"
+              />
             </Link>
 
             {/* 네비게이션 링크 */}
@@ -134,8 +133,11 @@ export function Login() {
           )}
 
           <div className="flex items-center justify-center mb-8">
-            <Palette className="h-12 w-12 text-primary" />
-            <span className="ml-3 text-3xl font-bold text-primary">YH Art Studio</span>
+            <img 
+              src="/yh-art-lab-logo.png" 
+              alt="YH Art Lab" 
+              className="h-16 w-auto"
+            />
           </div>
 
           <Card>

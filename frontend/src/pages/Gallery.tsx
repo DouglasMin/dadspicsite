@@ -79,15 +79,15 @@ export function Gallery() {
   return (
     <div className="min-h-screen bg-background">
       {/* Page Header - Minimal */}
-      <section className="py-20 bg-card">
+      <section className="py-20 bg-background border-b border-border/30">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="max-w-4xl mx-auto text-center">
             <div className="mb-8">
-              <div className="w-16 h-px bg-neutral-300 mx-auto mb-8" />
-              <h1 className="text-5xl md:text-6xl font-light text-neutral-900 tracking-tight mb-6">
+              <div className="w-16 h-px bg-primary/50 mx-auto mb-8" />
+              <h1 className="text-5xl md:text-6xl font-light text-foreground tracking-tight mb-6">
                 Gallery
               </h1>
-              <p className="text-lg text-neutral-600 font-light leading-relaxed max-w-2xl mx-auto">
+              <p className="text-lg text-muted-foreground font-light leading-relaxed max-w-2xl mx-auto">
                 현대미술의 다양한 시각과 감성을 담은 작품들을 만나보세요.<br />
                 각 작품이 전하는 고유한 이야기를 발견해보세요.
               </p>
@@ -100,7 +100,7 @@ export function Gallery() {
       <section className="py-24">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="flex flex-col md:flex-row justify-between items-center mb-12">
-            <h2 className="text-3xl font-light text-neutral-800 mb-6 md:mb-0">All Artworks</h2>
+            <h2 className="text-3xl font-light text-foreground mb-6 md:mb-0">All Artworks</h2>
             <div className="w-full md:w-auto md:max-w-xs">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
@@ -112,7 +112,7 @@ export function Gallery() {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1); // Reset to first page on new search
                   }}
-                  className="pl-10 w-full bg-white border-neutral-300 focus:ring-primary"
+                  className="pl-10 w-full bg-card border-border focus:ring-primary"
                 />
               </div>
             </div>
@@ -120,13 +120,13 @@ export function Gallery() {
 
           {paginatedArtworks.length === 0 ? (
             <div className="text-center py-32">
-              <div className="w-16 h-16 border border-neutral-200 rounded-full flex items-center justify-center mx-auto mb-8">
-                <ImageIcon className="size-6 text-neutral-400" />
+              <div className="w-16 h-16 border border-border rounded-full flex items-center justify-center mx-auto mb-8">
+                <ImageIcon className="size-6 text-muted-foreground" />
               </div>
-              <p className="text-xl font-light text-neutral-600 mb-4">
+              <p className="text-xl font-light text-foreground mb-4">
                 {searchTerm ? 'No results found.' : 'Coming Soon'}
               </p>
-              <p className="text-sm text-neutral-400 font-light">
+              <p className="text-sm text-muted-foreground font-light">
                 {searchTerm ? 'Try a different search term.' : 'New artworks will be available soon.'}
               </p>
             </div>
@@ -141,7 +141,7 @@ export function Gallery() {
                   >
                     {/* Image Container */}
                     {artwork.imageUrl ? (
-                      <div className="relative aspect-[3/4] overflow-hidden bg-neutral-100 mb-6 rounded-lg shadow-sm">
+                      <div className="relative aspect-[3/4] overflow-hidden bg-neutral-800 mb-6 rounded-sm border border-neutral-700/50">
                         <img
                           src={artwork.imageUrl}
                           alt={artwork.title}
@@ -149,7 +149,7 @@ export function Gallery() {
                         />
 
                         {/* Subtle overlay */}
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-500" />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-500" />
 
                         {/* Action button */}
                         <button
@@ -161,23 +161,23 @@ export function Gallery() {
                           className="absolute top-4 right-4 w-10 h-10 bg-white/90 hover:bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center"
                           title="Zoom In"
                         >
-                          <Eye className="size-4 text-neutral-700" />
+                          <Eye className="size-4 text-neutral-900" />
                         </button>
                       </div>
                     ) : (
-                      <div className="aspect-[3/4] bg-neutral-100 flex items-center justify-center mb-6 rounded-lg shadow-sm">
-                        <ImageIcon className="size-12 text-neutral-300" />
+                      <div className="aspect-[3/4] bg-neutral-800 flex items-center justify-center mb-6 rounded-sm border border-neutral-700/50">
+                        <ImageIcon className="size-12 text-neutral-600" />
                       </div>
                     )}
 
                     {/* Content */}
-                    <div className="space-y-3 text-center">
-                      <h3 className="text-lg font-medium text-neutral-800 tracking-wide group-hover:text-primary transition-colors">
+                    <div className="space-y-3 text-center bg-neutral-900/50 p-4 rounded-sm">
+                      <h3 className="text-lg font-medium text-neutral-100 tracking-wide group-hover:text-primary transition-colors">
                         {artwork.title}
                       </h3>
-                      <div className="flex items-center justify-center gap-3 text-sm text-neutral-500 font-light">
+                      <div className="flex items-center justify-center gap-3 text-sm text-neutral-400 font-light">
                         <span>{artwork.year}</span>
-                        <div className="w-px h-3 bg-neutral-300" />
+                        <div className="w-px h-3 bg-neutral-700" />
                         <span>{artwork.medium}</span>
                       </div>
                     </div>
@@ -188,13 +188,13 @@ export function Gallery() {
               {/* Pagination */}
               {totalPages > 1 && (
                 <div className="flex justify-center items-center gap-4 mt-16">
-                  <Button onClick={handlePrevPage} disabled={currentPage === 1} variant="outline" className="hover:bg-neutral-100">
+                  <Button onClick={handlePrevPage} disabled={currentPage === 1} variant="outline" className="hover:bg-primary hover:text-primary-foreground">
                     이전 페이지
                   </Button>
                   <span className="text-sm text-muted-foreground">
                     {currentPage} / {totalPages}
                   </span>
-                  <Button onClick={handleNextPage} disabled={currentPage === totalPages} variant="outline" className="hover:bg-neutral-100">
+                  <Button onClick={handleNextPage} disabled={currentPage === totalPages} variant="outline" className="hover:bg-primary hover:text-primary-foreground">
                     다음 페이지
                   </Button>
                 </div>

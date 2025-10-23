@@ -1,8 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { QrCode } from 'lucide-react';
-import { useState } from 'react';
+import { QrCode, Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import FsLightbox from 'fslightbox-react';
+import { api, type Artwork } from '@/lib/api';
 
 export function Home() {
   const navigate = useNavigate();
@@ -10,38 +11,29 @@ export function Home() {
     toggler: false,
     slide: 1
   });
+  const [featuredArtworks, setFeaturedArtworks] = useState<Artwork[]>([]);
+  const [loadingArtworks, setLoadingArtworks] = useState(true);
 
-  // 예시 작품 데이터
-  const featuredArtworks = [
-    {
-      id: 1,
-      title: "작품 1",
-      image: "/example_pics/examplepic1.JPG",
-      year: "2024",
-      medium: "캔버스에 아크릴"
-    },
-    {
-      id: 2,
-      title: "작품 2", 
-      image: "/example_pics/examplepic2.JPG",
-      year: "2024",
-      medium: "캔버스에 유화"
-    },
-    {
-      id: 3,
-      title: "작품 3",
-      image: "/example_pics/examplepic3.JPG", 
-      year: "2023",
-      medium: "혼합 매체"
-    },
-    {
-      id: 4,
-      title: "작품 4",
-      image: "/example_pics/examplepic4.JPG",
-      year: "2023", 
-      medium: "캔버스에 아크릴"
-    }
-  ];
+  useEffect(() => {
+    const fetchFeaturedArtworks = async () => {
+      try {
+        const artworks = await api.getArtworks();
+        // Get the 4 most recent artworks
+        const sorted = artworks
+          .filter(artwork => artwork.imageUrl) // Only artworks with images
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .slice(0, 4);
+        setFeaturedArtworks(sorted);
+      } catch (err) {
+        console.error('Failed to fetch featured artworks:', err);
+        setFeaturedArtworks([]);
+      } finally {
+        setLoadingArtworks(false);
+      }
+    };
+
+    fetchFeaturedArtworks();
+  }, []);
 
   const openLightboxOnSlide = (number: number) => {
     setLightboxController({
@@ -53,52 +45,44 @@ export function Home() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section - Minimalist Gallery Style */}
-      <section className="relative min-h-screen flex items-center justify-center bg-card">
+      <section className="relative min-h-screen flex items-center justify-center bg-background">
         {/* Subtle background texture */}
-        <div className="absolute inset-0 opacity-[0.02]">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,_#000_1px,_transparent_0)] bg-[length:24px_24px]" />
+        <div className="absolute inset-0 opacity-[0.03]">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,_#fff_1px,_transparent_0)] bg-[length:32px_32px]" />
         </div>
 
         {/* Floating decorative element */}
-        <div className="absolute top-24 right-24 pointer-events-none hidden lg:block">
+        <div className="absolute top-24 right-24 pointer-events-none hidden lg:block opacity-40">
           <img
             src="/ddunddun1.png"
             alt=""
             className="w-40 h-40 object-contain animate-[float_8s_ease-in-out_infinite]"
-            style={{ filter: 'grayscale(10%)' }}
+            style={{ filter: 'grayscale(30%) brightness(1.2)' }}
           />
         </div>
 
         <div className="container mx-auto px-6 lg:px-12 text-center">
           <div className="max-w-5xl mx-auto space-y-12">
             {/* Minimal badge */}
-            <div className="inline-block px-6 py-2 border border-neutral-200 rounded-full text-sm font-light tracking-wide text-neutral-600 bg-white/80 backdrop-blur-sm">
+            <div className="inline-block px-6 py-2 border border-border/50 rounded-full text-sm font-light tracking-wide text-muted-foreground bg-card/50 backdrop-blur-sm">
               Contemporary Art Gallery
             </div>
 
             {/* Large, elegant heading with logo */}
             <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 md:gap-8">
+              <div className="flex items-center justify-center">
                 <img 
-                  src="/yh-logo-no-background.png" 
-                  alt="YH" 
-                  className="h-24 sm:h-32 md:h-48 lg:h-56 w-auto"
+                  src="/yh-art-lab-logo.png" 
+                  alt="YH Art Lab" 
+                  className="h-48 sm:h-56 md:h-64 lg:h-80 xl:h-96 w-auto opacity-95"
                 />
-                <div className="flex items-center gap-3 sm:gap-4 md:gap-6">
-                  <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-light tracking-tight text-neutral-900">
-                    Art
-                  </h1>
-                  <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-medium tracking-tight text-primary">
-                    Lab
-                  </h1>
-                </div>
               </div>
               
-              <div className="w-24 h-px bg-neutral-300 mx-auto" />
+              <div className="w-24 h-px bg-border mx-auto" />
             </div>
 
             {/* Refined description */}
-            <p className="text-lg md:text-xl text-neutral-600 max-w-2xl mx-auto leading-relaxed font-light">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-light">
               현대미술의 새로운 시각을 제시하는 공간입니다.<br />
               각 작품이 전하는 고유한 이야기를 발견해보세요.
             </p>
@@ -109,7 +93,7 @@ export function Home() {
                 size="lg"
                 variant="outline"
                 onClick={() => navigate('/gallery')}
-                className="px-12 py-4 text-base font-light border-neutral-300 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white transition-all duration-300"
+                className="px-12 py-4 text-base font-light border-border hover:border-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300"
               >
                 작품 둘러보기
               </Button>
@@ -124,20 +108,20 @@ export function Home() {
       </section>
 
       {/* About Section - Minimal */}
-      <section className="py-24 bg-background">
+      <section className="py-24 bg-card">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="max-w-4xl mx-auto">
             <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
               <div className="space-y-8 order-2 md:order-1">
                 <div>
-                  <div className="w-12 h-px bg-neutral-400 mb-6" />
-                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-light text-neutral-900 leading-tight">
+                  <div className="w-12 h-px bg-primary/50 mb-6" />
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-light text-foreground leading-tight">
                     예술과 기술의<br />
                     새로운 만남
                   </h2>
                 </div>
                 
-                <div className="space-y-6 text-neutral-600 font-light leading-relaxed text-sm sm:text-base">
+                <div className="space-y-6 text-muted-foreground font-light leading-relaxed text-sm sm:text-base">
                   <p>
                     YH Art Lab은 현대미술의 경계를 넓혀가는 실험적 공간입니다. 
                     전통적인 갤러리 경험에 디지털 기술을 접목하여, 
@@ -153,15 +137,15 @@ export function Home() {
                   <Button
                     variant="ghost"
                     onClick={() => navigate('/exhibitions')}
-                    className="text-neutral-600 hover:text-neutral-900 font-light px-0 text-sm"
+                    className="text-muted-foreground hover:text-primary font-light px-0 text-sm"
                   >
                     전시 일정 보기
                   </Button>
-                  <div className="hidden sm:block w-px h-6 bg-neutral-300" />
+                  <div className="hidden sm:block w-px h-6 bg-border" />
                   <Button
                     variant="ghost"
                     onClick={() => navigate('/contact')}
-                    className="text-neutral-600 hover:text-neutral-900 font-light px-0 text-sm"
+                    className="text-muted-foreground hover:text-primary font-light px-0 text-sm"
                   >
                     문의하기
                   </Button>
@@ -169,15 +153,15 @@ export function Home() {
               </div>
 
               <div className="relative order-1 md:order-2">
-                <div className="aspect-[4/5] bg-neutral-200 overflow-hidden">
+                <div className="aspect-[4/5] bg-neutral-800 overflow-hidden rounded-sm border border-neutral-700/50">
                   <img
                     src="/ddunddun2.png"
                     alt="Gallery space"
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="absolute -bottom-3 -right-3 md:-bottom-4 md:-right-4 w-20 h-20 md:w-24 md:h-24 bg-white shadow-lg flex items-center justify-center">
-                  <QrCode className="size-6 md:size-8 text-neutral-400" />
+                <div className="absolute -bottom-3 -right-3 md:-bottom-4 md:-right-4 w-20 h-20 md:w-24 md:h-24 bg-white shadow-2xl flex items-center justify-center">
+                  <QrCode className="size-6 md:size-8 text-neutral-800" />
                 </div>
               </div>
             </div>
@@ -186,22 +170,22 @@ export function Home() {
       </section>
 
       {/* Artist Note Section - Minimal */}
-      <section className="py-24 bg-card">
+      <section className="py-24 bg-background">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="max-w-4xl mx-auto">
             {/* Section header */}
             <div className="mb-16">
               <div className="flex items-center gap-8 mb-8">
-                <div className="w-12 h-px bg-neutral-300" />
-                <h2 className="text-2xl md:text-3xl font-light text-neutral-900 tracking-wide">
+                <div className="w-12 h-px bg-border" />
+                <h2 className="text-2xl md:text-3xl font-light text-foreground tracking-wide">
                   작가노트
                 </h2>
-                <div className="flex-1 h-px bg-neutral-300" />
+                <div className="flex-1 h-px bg-border" />
               </div>
             </div>
 
             {/* Artist note content */}
-            <div className="space-y-5 text-neutral-700 font-light leading-relaxed text-base">
+            <div className="space-y-5 text-muted-foreground font-light leading-relaxed text-base">
               <p>
                 꿈도 꾸지 않았습니다. 무얼 빈 캔버스에 그려 넣는다는 것을. 작가들의 작품 앞에 서 있었던 시간은 혹시 동료 의사들에 비해 조금 많았을지 모르겠지만, 그러나 전시장으로 들어가는 순간, 가슴 터질 듯한 긴장감과 기대는 매번 반복되고 중독되었던 기억이 있습니다. 작가들의 창의성, 투철한 주제의식, 구도와 색채를 아름답게 구현하기 위한 연단의 시간이 날카롭게 느껴지고, 그러면서 그림을 그려보면 어떨까 하는 막연한 선망이 차츰 자리 잡기 시작했던 것 같습니다.
               </p>
@@ -223,88 +207,102 @@ export function Home() {
       </section>
 
       {/* Featured Artworks Section - Gallery Style */}
-      <section className="py-24 bg-card">
+      <section className="py-24 bg-card/50">
         <div className="container mx-auto px-6 lg:px-12">
           {/* Minimal section header */}
           <div className="mb-20">
             <div className="flex items-center gap-8 mb-8">
-              <div className="w-12 h-px bg-neutral-300" />
-              <h2 className="text-2xl md:text-3xl font-light text-neutral-900 tracking-wide">
+              <div className="w-12 h-px bg-border" />
+              <h2 className="text-2xl md:text-3xl font-light text-foreground tracking-wide">
                 Selected Works
               </h2>
-              <div className="flex-1 h-px bg-neutral-300" />
+              <div className="flex-1 h-px bg-border" />
             </div>
           </div>
 
-          {/* Masonry-style grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredArtworks.map((artwork, index) => (
-              <div
-                key={artwork.id}
-                className={`group cursor-pointer ${
-                  index === 0 ? 'md:col-span-2 md:row-span-2' : ''
-                } ${index === 2 ? 'lg:col-span-2' : ''}`}
-                onClick={() => openLightboxOnSlide(index + 1)}
-              >
-                <div className="relative overflow-hidden bg-neutral-100 transition-all duration-700 hover:shadow-2xl">
-                  <div className={`relative ${
-                    index === 0 ? 'aspect-[4/3]' : 'aspect-[3/4]'
-                  } overflow-hidden`}>
-                    <img
-                      src={artwork.image}
-                      alt={artwork.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                    
-                    {/* Subtle overlay */}
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-500" />
-                  </div>
-                  
-                  {/* Minimal info */}
-                  <div className="p-6 bg-white">
-                    <div className="space-y-2">
-                      <h3 className="text-lg font-light text-neutral-900 tracking-wide">
-                        {artwork.title}
-                      </h3>
-                      <p className="text-sm text-neutral-500 font-light">
-                        {artwork.year} • {artwork.medium}
-                      </p>
+          {/* Loading state */}
+          {loadingArtworks ? (
+            <div className="text-center py-20">
+              <Loader2 className="size-12 animate-spin text-muted-foreground mx-auto mb-4" />
+              <p className="text-sm text-muted-foreground font-light">작품을 불러오는 중...</p>
+            </div>
+          ) : featuredArtworks.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-lg text-muted-foreground font-light">아직 등록된 작품이 없습니다.</p>
+            </div>
+          ) : (
+            <>
+              {/* Masonry-style grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {featuredArtworks.map((artwork, index) => (
+                  <div
+                    key={artwork.id}
+                    className={`group cursor-pointer ${
+                      index === 0 ? 'md:col-span-2 md:row-span-2' : ''
+                    } ${index === 2 ? 'lg:col-span-2' : ''}`}
+                    onClick={() => navigate(`/artwork/${artwork.id}`)}
+                  >
+                    <div className="relative overflow-hidden bg-neutral-800/95 transition-all duration-700 hover:shadow-2xl border border-neutral-700/50 hover:border-primary/50">
+                      <div className={`relative ${
+                        index === 0 ? 'aspect-[4/3]' : 'aspect-[3/4]'
+                      } overflow-hidden`}>
+                        <img
+                          src={artwork.imageUrl}
+                          alt={artwork.title}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                        
+                        {/* Subtle overlay */}
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-500" />
+                      </div>
+                      
+                      {/* Minimal info */}
+                      <div className="p-6 bg-neutral-900/90 backdrop-blur-sm">
+                        <div className="space-y-2">
+                          <h3 className="text-lg font-light text-neutral-100 tracking-wide">
+                            {artwork.title}
+                          </h3>
+                          <p className="text-sm text-neutral-400 font-light">
+                            {artwork.year} • {artwork.medium}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
+                ))}
+              </div>
+
+              {/* Minimal CTA */}
+              <div className="text-center mt-20">
+                <div className="inline-flex items-center gap-4">
+                  <div className="w-8 h-px bg-border" />
+                  <Button
+                    variant="ghost"
+                    onClick={() => navigate('/gallery')}
+                    className="text-muted-foreground hover:text-primary font-light tracking-wide px-0"
+                  >
+                    View All Works
+                  </Button>
+                  <div className="w-8 h-px bg-border" />
                 </div>
               </div>
-            ))}
-          </div>
-
-          {/* Minimal CTA */}
-          <div className="text-center mt-20">
-            <div className="inline-flex items-center gap-4">
-              <div className="w-8 h-px bg-neutral-300" />
-              <Button
-                variant="ghost"
-                onClick={() => navigate('/gallery')}
-                className="text-neutral-600 hover:text-neutral-900 font-light tracking-wide px-0"
-              >
-                View All Works
-              </Button>
-              <div className="w-8 h-px bg-neutral-300" />
-            </div>
-          </div>
+            </>
+          )}
         </div>
       </section>
 
       {/* Final CTA Section - Minimal */}
-      <section className="py-24 bg-neutral-900 text-white">
+      <section className="py-24 bg-background border-t border-border/50">
         <div className="container mx-auto px-6 lg:px-12 text-center">
           <div className="max-w-3xl mx-auto space-y-8">
-            <div className="w-16 h-px bg-neutral-600 mx-auto" />
+            <div className="w-16 h-px bg-primary/50 mx-auto" />
             
-            <h2 className="text-4xl md:text-5xl font-light tracking-tight">
+            <h2 className="text-4xl md:text-5xl font-light tracking-tight text-foreground">
               예술 여행을<br />
               시작해보세요
             </h2>
             
-            <p className="text-lg text-neutral-300 font-light leading-relaxed max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground font-light leading-relaxed max-w-2xl mx-auto">
               각각의 작품이 전하는 고유한 이야기와 감정을 발견하는 특별한 경험이 기다립니다.
             </p>
 
@@ -313,7 +311,7 @@ export function Home() {
                 size="lg"
                 variant="outline"
                 onClick={() => navigate('/gallery')}
-                className="px-12 py-4 text-base font-light border-neutral-600 text-white hover:bg-white hover:text-neutral-900 transition-all duration-300"
+                className="px-12 py-4 text-base font-light border-border hover:border-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300"
               >
                 갤러리 입장하기
               </Button>
@@ -322,13 +320,15 @@ export function Home() {
         </div>
       </section>
 
-      {/* Lightbox */}
-      <FsLightbox
-        toggler={lightboxController.toggler}
-        sources={featuredArtworks.map(artwork => artwork.image)}
-        slide={lightboxController.slide}
-        type="image"
-      />
+      {/* Lightbox - Always render to avoid hooks issues */}
+      {featuredArtworks.length > 0 && (
+        <FsLightbox
+          toggler={lightboxController.toggler}
+          sources={featuredArtworks.map(artwork => artwork.imageUrl)}
+          slide={lightboxController.slide}
+          type="image"
+        />
+      )}
     </div>
   );
 }

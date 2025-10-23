@@ -16,19 +16,16 @@ export function Layout() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header - Minimal Gallery Style */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-card/90 backdrop-blur-md border-b border-border/50">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/30">
         <div className="container mx-auto px-6 lg:px-12">
           <nav className="flex items-center justify-between h-20">
             {/* Logo/Brand - Minimal */}
-            <Link to="/" className="group flex items-center gap-3">
+            <Link to="/" className="group">
               <img 
-                src="/yh-logo-no-background.png" 
-                alt="YH" 
+                src="/yh-art-lab-logo.png" 
+                alt="YH Art Lab" 
                 className="h-10 sm:h-12 w-auto transition-opacity group-hover:opacity-70"
               />
-              <span className="text-lg sm:text-xl font-light tracking-wide text-neutral-900">
-                Art Lab
-              </span>
             </Link>
 
             {/* Navigation - Minimal */}
@@ -43,13 +40,13 @@ export function Layout() {
                     to={item.path}
                     className={`text-sm font-light tracking-wide transition-all duration-300 relative ${
                       isActive
-                        ? 'text-neutral-900'
-                        : 'text-neutral-500 hover:text-neutral-900'
+                        ? 'text-primary'
+                        : 'text-muted-foreground hover:text-foreground'
                     }`}
                   >
                     {item.label}
                     {isActive && (
-                      <div className="absolute -bottom-1 left-0 w-full h-px bg-neutral-900" />
+                      <div className="absolute -bottom-1 left-0 w-full h-px bg-primary" />
                     )}
                   </Link>
                 );
@@ -59,7 +56,7 @@ export function Layout() {
               
               <Link
                 to="/admin"
-                className="text-xs font-light tracking-wider text-neutral-400 hover:text-neutral-600 transition-colors uppercase"
+                className="text-xs font-light tracking-wider text-muted-foreground hover:text-primary transition-colors uppercase"
               >
                 Admin
               </Link>
@@ -68,7 +65,7 @@ export function Layout() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-neutral-900 hover:text-neutral-600 transition-colors"
+              className="md:hidden p-2 text-foreground hover:text-primary transition-colors"
               aria-label="메뉴"
             >
               {mobileMenuOpen ? (
@@ -82,7 +79,7 @@ export function Layout() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-card border-t border-border">
+          <div className="md:hidden bg-background/98 border-t border-border">
             <div className="container mx-auto px-6 py-6">
               <nav className="flex flex-col gap-4">
                 {navItems.map((item) => {
@@ -96,8 +93,8 @@ export function Layout() {
                       onClick={() => setMobileMenuOpen(false)}
                       className={`text-base font-light tracking-wide transition-colors py-2 ${
                         isActive
-                          ? 'text-neutral-900 font-normal'
-                          : 'text-neutral-500'
+                          ? 'text-primary font-normal'
+                          : 'text-muted-foreground'
                       }`}
                     >
                       {item.label}
@@ -110,7 +107,7 @@ export function Layout() {
                 <Link
                   to="/admin"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm font-light tracking-wider text-neutral-400 py-2 uppercase"
+                  className="text-sm font-light tracking-wider text-muted-foreground py-2 uppercase"
                 >
                   Admin
                 </Link>
@@ -126,22 +123,19 @@ export function Layout() {
       </main>
 
       {/* Footer - Minimal */}
-      <footer className="bg-background border-t border-border py-16">
+      <footer className="bg-card border-t border-border/50 py-16">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             {/* Brand */}
             <div className="md:col-span-2">
-              <div className="flex items-center gap-4 mb-6">
+              <div className="mb-6">
                 <img 
-                  src="/yh-logo-no-background.png" 
-                  alt="YH" 
+                  src="/yh-art-lab-logo.png" 
+                  alt="YH Art Lab" 
                   className="h-8 w-auto"
                 />
-                <span className="font-light text-xl tracking-wide text-neutral-900">
-                  Art Lab
-                </span>
               </div>
-              <p className="text-sm text-neutral-600 font-light leading-relaxed max-w-md">
+              <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-md">
                 현대미술의 새로운 시각을 제시하며, 예술과 기술의 조화를 통해 
                 관람객들에게 특별한 경험을 선사합니다.
               </p>
@@ -149,13 +143,13 @@ export function Layout() {
 
             {/* Navigation */}
             <div>
-              <h3 className="font-light text-neutral-900 mb-4 tracking-wide">Navigation</h3>
+              <h3 className="font-light text-foreground mb-4 tracking-wide">Navigation</h3>
               <ul className="space-y-3">
                 {navItems.map((item) => (
                   <li key={item.path}>
                     <Link
                       to={item.path}
-                      className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors font-light"
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors font-light"
                     >
                       {item.label}
                     </Link>
@@ -166,12 +160,12 @@ export function Layout() {
 
             {/* Contact */}
             <div>
-              <h3 className="font-light text-neutral-900 mb-4 tracking-wide">Visit</h3>
-              <div className="space-y-3 text-sm text-neutral-500 font-light">
+              <h3 className="font-light text-foreground mb-4 tracking-wide">Visit</h3>
+              <div className="space-y-3 text-sm text-muted-foreground font-light">
                 <p>QR 코드를 스캔하여<br />작품의 이야기를 발견하세요</p>
                 <Link
                   to="/contact"
-                  className="inline-block text-neutral-500 hover:text-neutral-900 transition-colors"
+                  className="inline-block text-muted-foreground hover:text-primary transition-colors"
                 >
                   문의하기 →
                 </Link>
@@ -179,13 +173,13 @@ export function Layout() {
             </div>
           </div>
 
-          <div className="pt-8 border-t border-neutral-200 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-xs text-neutral-400 font-light tracking-wide">
+          <div className="pt-8 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-xs text-muted-foreground/70 font-light tracking-wide">
               © {new Date().getFullYear()} YH Art Lab. All rights reserved.
             </p>
             <div className="flex items-center gap-6">
-              <div className="w-8 h-px bg-neutral-300" />
-              <span className="text-xs text-neutral-400 font-light tracking-wider">
+              <div className="w-8 h-px bg-border" />
+              <span className="text-xs text-muted-foreground/70 font-light tracking-wider">
                 Contemporary Art Gallery
               </span>
             </div>
