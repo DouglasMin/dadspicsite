@@ -193,11 +193,11 @@ function ExhibitionCard({
         {/* Image */}
         <div className="relative order-1">
           {exhibition.imageUrl ? (
-            <div className="relative aspect-[4/3] overflow-hidden bg-neutral-100">
+            <div className="relative aspect-[4/3] overflow-hidden bg-neutral-100 flex items-center justify-center">
               <img
                 src={exhibition.imageUrl}
                 alt={exhibition.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
               
               {/* Status badge */}
