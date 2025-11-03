@@ -21,9 +21,9 @@ export function Layout() {
           <nav className="flex items-center justify-between h-20">
             {/* Logo/Brand - Minimal */}
             <Link to="/" className="group">
-              <img 
-                src="/yh-art-lab-logo.png" 
-                alt="YH Art Lab" 
+              <img
+                src="/yh-art-lab-logo.png"
+                alt="YH Art Lab"
                 className="h-10 sm:h-12 w-auto transition-opacity group-hover:opacity-70"
               />
             </Link>
@@ -38,11 +38,10 @@ export function Layout() {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`text-sm font-light tracking-wide transition-all duration-300 relative ${
-                      isActive
+                    className={`text-sm font-light tracking-wide transition-all duration-300 relative ${isActive
                         ? 'text-primary'
                         : 'text-muted-foreground hover:text-foreground'
-                    }`}
+                      }`}
                   >
                     {item.label}
                     {isActive && (
@@ -51,9 +50,9 @@ export function Layout() {
                   </Link>
                 );
               })}
-              
+
               <div className="w-px h-4 bg-neutral-300" />
-              
+
               <Link
                 to="/admin"
                 className="text-xs font-light tracking-wider text-muted-foreground hover:text-primary transition-colors uppercase"
@@ -91,19 +90,18 @@ export function Layout() {
                       key={item.path}
                       to={item.path}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`text-base font-light tracking-wide transition-colors py-2 ${
-                        isActive
+                      className={`text-base font-light tracking-wide transition-colors py-2 ${isActive
                           ? 'text-primary font-normal'
                           : 'text-muted-foreground'
-                      }`}
+                        }`}
                     >
                       {item.label}
                     </Link>
                   );
                 })}
-                
+
                 <div className="w-full h-px bg-border my-2" />
-                
+
                 <Link
                   to="/admin"
                   onClick={() => setMobileMenuOpen(false)}
@@ -129,16 +127,19 @@ export function Layout() {
             {/* Brand */}
             <div className="md:col-span-2">
               <div className="mb-6">
-                <img 
-                  src="/yh-art-lab-logo.png" 
-                  alt="YH Art Lab" 
+                <img
+                  src="/yh-art-lab-logo.png"
+                  alt="YH Art Lab"
                   className="h-8 w-auto"
                 />
               </div>
-              <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-md">
+
+              {/* TODO :  아빠 작가 introduction page 만들기*/}
+
+              {/* <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-md">
                 현대미술의 새로운 시각을 제시하며, 예술과 기술의 조화를 통해 
                 관람객들에게 특별한 경험을 선사합니다.
-              </p>
+              </p> */}
             </div>
 
             {/* Navigation */}

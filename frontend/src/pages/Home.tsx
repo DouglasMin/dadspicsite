@@ -4,6 +4,7 @@ import { QrCode, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import FsLightbox from 'fslightbox-react';
 import { api, type Artwork } from '@/lib/api';
+import { RecentNews } from '@/components/RecentNews';
 
 export function Home() {
   const navigate = useNavigate();
@@ -44,124 +45,257 @@ export function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section - Minimalist Gallery Style */}
-      <section className="relative min-h-screen flex items-center justify-center bg-background">
-        {/* Subtle background texture */}
-        <div className="absolute inset-0 opacity-[0.03]">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,_#fff_1px,_transparent_0)] bg-[length:32px_32px]" />
+      {/* Hero Section - Redesigned */}
+      <section className="relative min-h-screen flex items-center bg-background overflow-hidden">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-card/30 to-background" />
+        
+        {/* Decorative circles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+          <div className="absolute top-1/2 -left-40 w-80 h-80 bg-primary/3 rounded-full blur-3xl" />
         </div>
 
-        {/* Floating decorative element */}
-        <div className="absolute top-24 right-24 pointer-events-none hidden lg:block opacity-40">
-          <img
-            src="/ddunddun1.png"
-            alt=""
-            className="w-40 h-40 object-contain animate-[float_8s_ease-in-out_infinite]"
-            style={{ filter: 'grayscale(30%) brightness(1.2)' }}
-          />
-        </div>
+        <div className="container mx-auto px-6 lg:px-12 relative">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center min-h-screen py-20">
+            {/* Left: Content */}
+            <div className="space-y-10 text-center lg:text-left">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full">
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                <span className="text-sm font-medium text-primary tracking-wide">
+                  의사에서 화가로의 여정
+                </span>
+              </div>
 
-        <div className="container mx-auto px-6 lg:px-12 text-center">
-          <div className="max-w-5xl mx-auto space-y-12">
-            {/* Minimal badge */}
-            <div className="inline-block px-6 py-2 border border-border/50 rounded-full text-sm font-light tracking-wide text-muted-foreground bg-card/50 backdrop-blur-sm">
-              Contemporary Art Gallery
+              {/* Main heading */}
+              <div className="space-y-6">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-foreground leading-tight tracking-tight">
+                  생명을 그리는<br />
+                  <span className="text-primary">예술가</span>
+                </h1>
+                
+                <div className="w-20 h-1 bg-primary/50 lg:mx-0 mx-auto" />
+              </div>
+
+              {/* Description */}
+              <div className="space-y-4 max-w-xl lg:mx-0 mx-auto">
+                <p className="text-lg md:text-xl text-muted-foreground font-light leading-relaxed">
+                  30년간 백혈병 환자의 생명을 지켜온 혈액학 전문의,<br />
+                  이제는 캔버스 위에서 생명의 이야기를 그립니다.
+                </p>
+                <p className="text-base text-muted-foreground/80 font-light leading-relaxed">
+                  무균병실에서 목격한 인간의 존엄과 희망을<br />
+                  아크릴 물감으로 담아냅니다.
+                </p>
+              </div>
+
+              {/* CTAs */}
+              <div className="flex flex-col sm:flex-row gap-4 lg:justify-start justify-center">
+                <Button
+                  size="lg"
+                  onClick={() => navigate('/gallery')}
+                  className="px-10 py-6 text-base font-light shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  작품 감상하기
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() => navigate('/exhibitions')}
+                  className="px-10 py-6 text-base font-light border-2 hover:border-primary transition-all duration-300"
+                >
+                  전시 정보
+                </Button>
+              </div>
+
+              {/* Quick stats */}
+              <div className="flex gap-8 pt-8 lg:justify-start justify-center">
+                <div>
+                  <div className="text-3xl font-light text-primary mb-1">30+</div>
+                  <div className="text-xs text-muted-foreground tracking-wide">Years</div>
+                </div>
+                <div className="w-px bg-border" />
+                <div>
+                  <div className="text-3xl font-light text-primary mb-1">2</div>
+                  <div className="text-xs text-muted-foreground tracking-wide">Exhibitions</div>
+                </div>
+                <div className="w-px bg-border" />
+                <div>
+                  <div className="text-3xl font-light text-primary mb-1">2</div>
+                  <div className="text-xs text-muted-foreground tracking-wide">Awards</div>
+                </div>
+              </div>
             </div>
 
-            {/* Large, elegant heading with logo */}
-            <div className="space-y-6">
-              <div className="flex items-center justify-center">
+            {/* Right: Logo composition */}
+            <div className="relative flex items-center justify-center">
+              {/* Main logo - 900x350 ratio preserved */}
+              <div className="relative">
                 <img 
                   src="/yh-art-lab-logo.png" 
                   alt="YH Art Lab" 
-                  className="h-48 sm:h-56 md:h-64 lg:h-80 xl:h-96 w-auto opacity-95"
+                  className="w-full max-w-md lg:max-w-lg xl:max-w-2xl h-auto opacity-95 drop-shadow-2xl"
                 />
+
+                {/* Decorative elements around logo */}
+                <div className="absolute -top-8 -right-8 w-32 h-32 bg-primary/10 rounded-full -z-10 blur-2xl animate-pulse" />
+                <div className="absolute -bottom-8 -left-8 w-40 h-40 bg-primary/5 rounded-full -z-10 blur-2xl" />
+                <div className="absolute top-1/2 -right-12 w-24 h-24 bg-primary/5 rounded-full -z-10 blur-xl" />
               </div>
-              
-              <div className="w-24 h-px bg-border mx-auto" />
-            </div>
-
-            {/* Refined description */}
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-light">
-              현대미술의 새로운 시각을 제시하는 공간입니다.<br />
-              각 작품이 전하는 고유한 이야기를 발견해보세요.
-            </p>
-
-            {/* Minimal CTA */}
-            <div className="pt-8">
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => navigate('/gallery')}
-                className="px-12 py-4 text-base font-light border-border hover:border-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300"
-              >
-                작품 둘러보기
-              </Button>
             </div>
           </div>
         </div>
 
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="w-px h-12 bg-gradient-to-b from-transparent via-neutral-400 to-transparent" />
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-px h-12 bg-gradient-to-b from-transparent via-primary/50 to-transparent" />
+            <span className="text-xs text-muted-foreground font-light tracking-widest">SCROLL</span>
+          </div>
         </div>
       </section>
 
-      {/* About Section - Minimal */}
-      <section className="py-24 bg-card">
-        <div className="container mx-auto px-6 lg:px-12">
-          <div className="max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
-              <div className="space-y-8 order-2 md:order-1">
-                <div>
-                  <div className="w-12 h-px bg-primary/50 mb-6" />
-                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-light text-foreground leading-tight">
-                    예술과 기술의<br />
-                    새로운 만남
-                  </h2>
-                </div>
-                
-                <div className="space-y-6 text-muted-foreground font-light leading-relaxed text-sm sm:text-base">
-                  <p>
-                    YH Art Lab은 현대미술의 경계를 넓혀가는 실험적 공간입니다. 
-                    전통적인 갤러리 경험에 디지털 기술을 접목하여, 
-                    관람객들에게 더욱 깊이 있는 예술적 경험을 제공합니다.
-                  </p>
-                  <p>
-                    각 작품에 부착된 QR 코드를 통해 작가의 이야기, 창작 과정, 
-                    그리고 작품에 담긴 의미를 모바일 기기에서 바로 확인할 수 있습니다.
-                  </p>
-                </div>
+      {/* About Artist Section - Redesigned */}
+      <section className="relative py-32 bg-gradient-to-br from-card via-background to-card overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+        </div>
 
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 pt-4">
-                  <Button
-                    variant="ghost"
-                    onClick={() => navigate('/exhibitions')}
-                    className="text-muted-foreground hover:text-primary font-light px-0 text-sm"
-                  >
-                    전시 일정 보기
-                  </Button>
-                  <div className="hidden sm:block w-px h-6 bg-border" />
-                  <Button
-                    variant="ghost"
-                    onClick={() => navigate('/contact')}
-                    className="text-muted-foreground hover:text-primary font-light px-0 text-sm"
-                  >
-                    문의하기
-                  </Button>
-                </div>
+        <div className="container mx-auto px-6 lg:px-12 relative">
+          <div className="max-w-6xl mx-auto">
+            {/* Header with quote */}
+            <div className="text-center mb-20">
+              <div className="inline-block mb-8">
+                <div className="w-16 h-px bg-primary/50 mx-auto mb-6" />
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-foreground leading-tight mb-8">
+                  피와 생명을 다루던 의사에서<br />
+                  <span className="text-primary">색으로 삶을 그리는 작가로</span>
+                </h2>
               </div>
+              
+              <p className="text-lg md:text-xl text-muted-foreground font-light italic max-w-3xl mx-auto leading-relaxed">
+                "이제는 붓으로 생명을 이야기하고 있습니다"
+              </p>
+            </div>
 
-              <div className="relative order-1 md:order-2">
-                <div className="aspect-[4/5] bg-neutral-800 overflow-hidden rounded-sm border border-neutral-700/50">
+            {/* Main content grid */}
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+              {/* Left: Image with overlay info */}
+              <div className="relative order-2 lg:order-1">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-lg shadow-2xl">
                   <img
                     src="/ddunddun2.png"
-                    alt="Gallery space"
+                    alt="민유홍 작가"
                     className="w-full h-full object-cover"
                   />
+                  {/* Gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  
+                  {/* Info overlay */}
+                  <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-12 h-px bg-white/50" />
+                        <span className="text-sm tracking-widest uppercase">Artist</span>
+                      </div>
+                      <h3 className="text-2xl md:text-3xl font-light">민유홍</h3>
+                      <p className="text-sm text-white/80 font-light">
+                        세브란스병원 혈액종양내과 명예교수<br />
+                        현대미술 작가
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* QR Code badge */}
+                  <div className="absolute top-6 right-6 p-4 bg-white/95 backdrop-blur-sm rounded-lg shadow-xl">
+                    <QrCode className="size-8 text-neutral-800" />
+                  </div>
                 </div>
-                <div className="absolute -bottom-3 -right-3 md:-bottom-4 md:-right-4 w-20 h-20 md:w-24 md:h-24 bg-white shadow-2xl flex items-center justify-center">
-                  <QrCode className="size-6 md:size-8 text-neutral-800" />
+
+                {/* Decorative accent */}
+                <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-primary/20 rounded-lg -z-10" />
+                <div className="absolute -top-6 -right-6 w-24 h-24 bg-primary/10 rounded-full -z-10" />
+              </div>
+
+              {/* Right: Story content */}
+              <div className="space-y-8 order-1 lg:order-2">
+                {/* Journey highlights */}
+                <div className="space-y-6">
+                  <div className="flex gap-4">
+                    <div className="flex-shrink-0 w-1 bg-primary/30 rounded-full" />
+                    <div className="space-y-3">
+                      <h3 className="text-xl font-light text-foreground">30년 백혈병 전문의</h3>
+                      <p className="text-muted-foreground font-light leading-relaxed">
+                        1991년부터 세브란스병원 혈액종양내과 교수로 재직하며 
+                        대한혈액학회 이사장을 역임한 국내 대표 혈액암 전문가. 
+                        생명의 최전선에서 완치의 기쁨과 이별의 슬픔을 함께하며 
+                        생명의 본질을 고민했습니다.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <div className="flex-shrink-0 w-1 bg-primary/30 rounded-full" />
+                    <div className="space-y-3">
+                      <h3 className="text-xl font-light text-foreground">독학으로 시작한 예술</h3>
+                      <p className="text-muted-foreground font-light leading-relaxed">
+                        2022년 정년퇴임 후 집 식탁에서 시작한 그림이 
+                        이제는 전업 작가의 길로. 무균병실 시리즈로 
+                        제33회 대한민국 기독미술대전 특선, 
+                        제5회 중앙미술대전 입상하며 작가로서 인정받기 시작했습니다.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <div className="flex-shrink-0 w-1 bg-primary/30 rounded-full" />
+                    <div className="space-y-3">
+                      <h3 className="text-xl font-light text-foreground">아크릴로 담는 생명의 온도</h3>
+                      <p className="text-muted-foreground font-light leading-relaxed">
+                        "물감이 빠르게 마르기 때문에 감정이 증발하기 전에 남길 수 있습니다." 
+                        진료 현장에서 겪은 불안과 기쁨, 환자와의 정서적 교류를 
+                        독창적인 조형 언어로 표현하며 회복과 치유의 메시지를 전합니다.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CTA buttons */}
+                <div className="flex flex-wrap gap-4 pt-6">
+                  <Button
+                    size="lg"
+                    onClick={() => navigate('/gallery')}
+                    className="px-8 py-6 text-base font-light"
+                  >
+                    작품 감상하기
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={() => navigate('/exhibitions')}
+                    className="px-8 py-6 text-base font-light"
+                  >
+                    전시 일정
+                  </Button>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-3 gap-6 pt-8 border-t border-border/50">
+                  <div className="text-center">
+                    <div className="text-3xl font-light text-primary mb-2">30+</div>
+                    <div className="text-xs text-muted-foreground font-light tracking-wide">Years in Medicine</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-light text-primary mb-2">2</div>
+                    <div className="text-xs text-muted-foreground font-light tracking-wide">Solo Exhibitions</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-light text-primary mb-2">2</div>
+                    <div className="text-xs text-muted-foreground font-light tracking-wide">Awards</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -205,6 +339,9 @@ export function Home() {
           </div>
         </div>
       </section>
+
+      {/* Recent News Section */}
+      <RecentNews />
 
       {/* Featured Artworks Section - Gallery Style */}
       <section className="py-24 bg-card/50">
