@@ -39,8 +39,8 @@ export function Layout() {
                     key={item.path}
                     to={item.path}
                     className={`text-sm font-light tracking-wide transition-all duration-300 relative ${isActive
-                        ? 'text-primary'
-                        : 'text-muted-foreground hover:text-foreground'
+                      ? 'text-primary'
+                      : 'text-muted-foreground hover:text-foreground'
                       }`}
                   >
                     {item.label}
@@ -91,8 +91,8 @@ export function Layout() {
                       to={item.path}
                       onClick={() => setMobileMenuOpen(false)}
                       className={`text-base font-light tracking-wide transition-colors py-2 ${isActive
-                          ? 'text-primary font-normal'
-                          : 'text-muted-foreground'
+                        ? 'text-primary font-normal'
+                        : 'text-muted-foreground'
                         }`}
                     >
                       {item.label}
@@ -181,7 +181,7 @@ export function Layout() {
             <div className="flex items-center gap-6">
               <div className="w-8 h-px bg-border" />
               <span className="text-xs text-muted-foreground/70 font-light tracking-wider">
-                Contemporary Art Gallery
+                YH Art Gallery
               </span>
             </div>
           </div>

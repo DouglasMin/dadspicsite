@@ -286,7 +286,7 @@ export function Home() {
                 <div className="grid grid-cols-3 gap-6 pt-8 border-t border-border/50">
                   <div className="text-center">
                     <div className="text-3xl font-light text-primary mb-2">30+</div>
-                    <div className="text-xs text-muted-foreground font-light tracking-wide">Years in Medicine</div>
+                    <div className="text-xs text-muted-foreground font-light tracking-wide">Years in medical field</div>
                   </div>
                   <div className="text-center">
                     <div className="text-3xl font-light text-primary mb-2">2</div>
