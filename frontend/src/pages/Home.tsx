@@ -187,7 +187,7 @@ export function Home() {
               <div className="relative order-2 lg:order-1">
                 <div className="relative aspect-[4/5] overflow-hidden rounded-lg shadow-2xl">
                   <img
-                    src="/ddunddun2.png"
+                    src="/dad.jpeg"
                     alt="민유홍 작가"
                     className="w-full h-full object-cover"
                   />
