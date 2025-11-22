@@ -1,5 +1,5 @@
-import { useEffect, useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState, useMemo, useRef } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { api, type Artwork } from '@/lib/api';
 
 import { Loader2, Image as ImageIcon, Eye, Search } from 'lucide-react';
@@ -17,6 +17,8 @@ export function Gallery() {
     slide: 1
   });
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const artworkRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -52,6 +54,49 @@ export function Gallery() {
     );
   }, [artworks, searchTerm]);
 
+  // URL 쿼리 파라미터에서 페이지 정보 읽기
+  useEffect(() => {
+    const pageParam = searchParams.get('page');
+    if (pageParam) {
+      const page = parseInt(pageParam, 10);
+      if (!isNaN(page) && page > 0) {
+        setCurrentPage(page);
+      }
+    }
+  }, [searchParams]);
+
+  // 특정 작품으로 스크롤하기
+  useEffect(() => {
+    const returnToArtworkId = searchParams.get('returnToArtworkId');
+    if (returnToArtworkId && filteredArtworks.length > 0 && !loading) {
+      // 필터링된 작품 목록에서 작품 인덱스 찾기
+      const artworkIndex = filteredArtworks.findIndex(a => a.id === returnToArtworkId);
+      if (artworkIndex !== -1) {
+        // 작품이 있는 페이지 계산 (1-based)
+        const targetPage = Math.ceil((artworkIndex + 1) / ITEMS_PER_PAGE);
+        
+        // 페이지가 다르면 변경
+        if (targetPage !== currentPage) {
+          setCurrentPage(targetPage);
+        }
+        
+        // 페이지가 변경된 후 스크롤 (약간의 지연 필요)
+        const scrollTimeout = setTimeout(() => {
+          const element = artworkRefs.current[returnToArtworkId];
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // URL에서 returnToArtworkId 쿼리 파라미터 제거
+            const newSearchParams = new URLSearchParams(searchParams);
+            newSearchParams.delete('returnToArtworkId');
+            setSearchParams(newSearchParams, { replace: true });
+          }
+        }, 300);
+        
+        return () => clearTimeout(scrollTimeout);
+      }
+    }
+  }, [filteredArtworks, loading, searchParams, currentPage, setSearchParams]);
+
   const paginatedArtworks = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredArtworks.slice(startIndex, startIndex + ITEMS_PER_PAGE);
@@ -60,11 +105,23 @@ export function Gallery() {
   const totalPages = Math.ceil(filteredArtworks.length / ITEMS_PER_PAGE);
 
   const handleNextPage = () => {
-    setCurrentPage(prev => Math.min(prev + 1, totalPages));
+    const nextPage = Math.min(currentPage + 1, totalPages);
+    setCurrentPage(nextPage);
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('page', nextPage.toString());
+    setSearchParams(newSearchParams, { replace: true });
   };
 
   const handlePrevPage = () => {
-    setCurrentPage(prev => Math.max(prev - 1, 1));
+    const prevPage = Math.max(currentPage - 1, 1);
+    setCurrentPage(prevPage);
+    const newSearchParams = new URLSearchParams(searchParams);
+    if (prevPage === 1) {
+      newSearchParams.delete('page');
+    } else {
+      newSearchParams.set('page', prevPage.toString());
+    }
+    setSearchParams(newSearchParams, { replace: true });
   };
 
   if (loading) {
@@ -136,8 +193,9 @@ export function Gallery() {
                 {paginatedArtworks.map((artwork) => (
                   <div
                     key={artwork.id}
+                    ref={(el) => (artworkRefs.current[artwork.id] = el)}
                     className="group cursor-pointer"
-                    onClick={() => navigate(`/artwork/${artwork.id}`)}
+                    onClick={() => navigate(`/artwork/${artwork.id}?fromPage=${currentPage}`)}
                   >
                     {/* Image Container */}
                     {artwork.imageUrl ? (

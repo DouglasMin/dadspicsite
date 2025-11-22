@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { api, type Artwork } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Loader2, ArrowLeft, Calendar, Palette, Ruler } from 'lucide-react';
@@ -7,8 +7,18 @@ import { Loader2, ArrowLeft, Calendar, Palette, Ruler } from 'lucide-react';
 export function ArtworkDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [artwork, setArtwork] = useState<Artwork | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const fromPage = searchParams.get('fromPage');
+  const handleBackToGallery = () => {
+    if (fromPage && id) {
+      navigate(`/gallery?page=${fromPage}&returnToArtworkId=${id}`);
+    } else {
+      navigate('/gallery');
+    }
+  };
 
   useEffect(() => {
     const fetchArtwork = async () => {
@@ -42,7 +52,7 @@ export function ArtworkDetail() {
         <p className="text-xl text-neutral-600 font-light mb-8">작품을 찾을 수 없습니다</p>
         <Button
           variant="outline"
-          onClick={() => navigate('/gallery')}
+          onClick={handleBackToGallery}
           className="font-light"
         >
           <ArrowLeft className="size-4 mr-2" />
@@ -58,7 +68,7 @@ export function ArtworkDetail() {
       <div className="container mx-auto px-6 lg:px-12 pt-8">
         <Button
           variant="ghost"
-          onClick={() => navigate('/gallery')}
+          onClick={handleBackToGallery}
           className="font-light text-neutral-600 hover:text-neutral-900 px-0"
         >
           <ArrowLeft className="size-4 mr-2" />
