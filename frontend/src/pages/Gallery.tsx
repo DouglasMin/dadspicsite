@@ -193,7 +193,7 @@ export function Gallery() {
                 {paginatedArtworks.map((artwork) => (
                   <div
                     key={artwork.id}
-                    ref={(el) => (artworkRefs.current[artwork.id] = el)}
+                    ref={(el) => { artworkRefs.current[artwork.id] = el; }}
                     className="group cursor-pointer"
                     onClick={() => navigate(`/artwork/${artwork.id}?fromPage=${currentPage}`)}
                   >
