@@ -55,7 +55,14 @@ export function Gallery() {
   }, [artworks, searchTerm]);
 
   // URL 쿼리 파라미터에서 페이지 정보 읽기
+  // returnToArtworkId가 있으면 작품 ID로 페이지를 찾으므로 page 파라미터는 무시
   useEffect(() => {
+    const returnToArtworkId = searchParams.get('returnToArtworkId');
+    if (returnToArtworkId) {
+      // returnToArtworkId가 있으면 작품 ID로 페이지를 찾는 로직이 처리함
+      return;
+    }
+    
     const pageParam = searchParams.get('page');
     if (pageParam) {
       const page = parseInt(pageParam, 10);

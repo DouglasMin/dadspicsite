@@ -13,8 +13,13 @@ export function ArtworkDetail() {
 
   const fromPage = searchParams.get('fromPage');
   const handleBackToGallery = () => {
-    if (fromPage && id) {
-      navigate(`/gallery?page=${fromPage}&returnToArtworkId=${id}`);
+    if (id) {
+      // fromPage가 있으면 함께 전달, 없으면 작품 ID만 전달 (Gallery에서 페이지를 찾음)
+      if (fromPage) {
+        navigate(`/gallery?page=${fromPage}&returnToArtworkId=${id}`);
+      } else {
+        navigate(`/gallery?returnToArtworkId=${id}`);
+      }
     } else {
       navigate('/gallery');
     }
