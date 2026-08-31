@@ -4,6 +4,10 @@ import { success, created, noContent, badRequest, notFound, internalError } from
 
 const EXHIBITIONS_TABLE = process.env.EXHIBITIONS_TABLE_NAME;
 
+function isValidLink(link) {
+  return /^https?:\/\//i.test(link);
+}
+
 export const handler = async (event) => {
   console.log('Event:', JSON.stringify(event, null, 2));
 
@@ -61,6 +65,10 @@ async function createExhibition(bodyString) {
     return badRequest('Missing required fields: title, description, startDate, endDate, location');
   }
 
+  if (data.relatedLink && !isValidLink(data.relatedLink)) {
+    return badRequest('relatedLink must start with http:// or https://');
+  }
+
   const now = new Date().toISOString();
   const exhibition = {
     id: randomUUID(),
@@ -70,6 +78,8 @@ async function createExhibition(bodyString) {
     endDate: data.endDate,
     location: data.location,
     imageUrl: data.imageUrl || '',
+    relatedLink: data.relatedLink || '',
+    photoUrls: data.photoUrls || [],
     artworkIds: data.artworkIds || [],
     createdAt: now,
     updatedAt: now,
@@ -88,12 +98,16 @@ async function updateExhibition(id, bodyString) {
     return notFound('Exhibition not found');
   }
 
+  if (data.relatedLink && !isValidLink(data.relatedLink)) {
+    return badRequest('relatedLink must start with http:// or https://');
+  }
+
   // Build updates object
   const updates = {
     updatedAt: new Date().toISOString(),
   };
 
-  const allowedFields = ['title', 'description', 'startDate', 'endDate', 'location', 'imageUrl', 'artworkIds'];
+  const allowedFields = ['title', 'description', 'startDate', 'endDate', 'location', 'imageUrl', 'relatedLink', 'photoUrls', 'artworkIds'];
   allowedFields.forEach((field) => {
     if (data[field] !== undefined) {
       updates[field] = data[field];

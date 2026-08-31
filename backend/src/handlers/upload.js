@@ -5,6 +5,7 @@ import { success, badRequest, internalError } from '../utils/response.js';
 
 const s3 = new S3Client({ region: process.env.AWS_REGION || 'ap-northeast-2' });
 const IMAGES_BUCKET = process.env.IMAGES_BUCKET_NAME;
+const ALLOWED_FOLDERS = ['artworks', 'exhibitions'];
 
 export const handler = async (event) => {
   console.log('Event:', JSON.stringify(event, null, 2));
@@ -14,10 +15,16 @@ export const handler = async (event) => {
   }
 
   try {
-    const { fileName, fileType, fileSize } = JSON.parse(event.body);
+    const { fileName, fileType, fileSize, folder } = JSON.parse(event.body);
 
     if (!fileName || !fileType) {
       return badRequest('fileName and fileType are required');
+    }
+
+    // Restrict the destination prefix to a known set (no caller-controlled paths)
+    const targetFolder = folder || 'artworks';
+    if (!ALLOWED_FOLDERS.includes(targetFolder)) {
+      return badRequest(`Invalid folder. Allowed: ${ALLOWED_FOLDERS.join(', ')}`);
     }
 
     // Validate file type
@@ -35,7 +42,7 @@ export const handler = async (event) => {
     // Generate unique file name
     const fileExtension = getFileExtension(fileType);
     const uniqueFileName = `${randomUUID()}.${fileExtension}`;
-    const key = `artworks/${uniqueFileName}`;
+    const key = `${targetFolder}/${uniqueFileName}`;
 
     // Create presigned URL for PUT operation
     const command = new PutObjectCommand({
