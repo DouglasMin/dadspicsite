@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { api, type Artwork } from '@/lib/api';
 import { Button } from '@/components/ui/button';
-import { Loader2, ArrowLeft, Calendar, Palette, Ruler } from 'lucide-react';
+import { Loader2, ArrowLeft } from 'lucide-react';
+import { ArtworkPlate } from '@/components/ArtworkCard';
+import { Reveal } from '@/components/Reveal';
 
 export function ArtworkDetail() {
   const { id } = useParams<{ id: string }>();
@@ -28,7 +30,7 @@ export function ArtworkDetail() {
   useEffect(() => {
     const fetchArtwork = async () => {
       if (!id) return;
-      
+
       try {
         const data = await api.getArtwork(id);
         setArtwork(data);
@@ -44,114 +46,101 @@ export function ArtworkDetail() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 lg:px-6 py-32 text-center">
-        <Loader2 className="size-12 animate-spin text-neutral-900 mx-auto mb-4" />
-        <p className="text-lg text-neutral-600 font-light">작품을 불러오는 중...</p>
+      <div className="shell py-32 text-center">
+        <Loader2 className="mx-auto mb-5 size-8 animate-spin text-ink-faint" />
+        <p className="text-meta tracking-wide text-ink-soft">작품을 불러오는 중...</p>
       </div>
     );
   }
 
   if (!artwork) {
     return (
-      <div className="container mx-auto px-4 lg:px-6 py-32 text-center">
-        <p className="text-xl text-neutral-600 font-light mb-8">작품을 찾을 수 없습니다</p>
+      <div className="shell py-32 text-center">
+        <p className="font-serif text-h2 mb-8 font-normal text-ink">작품을 찾을 수 없습니다</p>
         <Button
           variant="outline"
           onClick={handleBackToGallery}
-          className="font-light"
+          className="pressable text-meta rounded-none border-ink font-normal"
         >
-          <ArrowLeft className="size-4 mr-2" />
+          <ArrowLeft className="size-4" />
           갤러리로 돌아가기
         </Button>
       </div>
     );
   }
 
+  const tombstone = [
+    { label: 'Year', value: artwork.year ? String(artwork.year) : '' },
+    { label: 'Medium', value: artwork.medium },
+    { label: 'Dimensions', value: artwork.dimensions },
+  ].filter((row) => row.value);
+
   return (
-    <div className="min-h-screen bg-background">
-      {/* Back Button */}
-      <div className="container mx-auto px-6 lg:px-12 pt-8">
+    <div className="min-h-screen bg-wall pb-[var(--space-section)]">
+      {/* Back */}
+      <div className="shell pt-8">
         <Button
           variant="ghost"
           onClick={handleBackToGallery}
-          className="font-light text-neutral-600 hover:text-neutral-900 px-0"
+          className="pressable arrow-link text-meta h-auto rounded-none px-0 font-normal text-ink-soft hover:bg-transparent hover:text-ink"
         >
-          <ArrowLeft className="size-4 mr-2" />
+          <ArrowLeft className="size-4" />
           갤러리로 돌아가기
         </Button>
       </div>
 
-      {/* Artwork Detail */}
-      <section className="py-8 md:py-12">
-        <div className="container mx-auto px-6 lg:px-12">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-start">
-              {/* Image */}
-              <div className="relative">
-                <div className="aspect-[3/4] md:aspect-[3/4] bg-neutral-100 overflow-hidden">
-                  {artwork.imageUrl ? (
-                    <img
-                      src={artwork.imageUrl}
-                      alt={artwork.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Palette className="size-12 md:size-16 text-neutral-300" />
-                    </div>
-                  )}
-                </div>
-              </div>
+      <section className="shell pt-[var(--space-block)]">
+        <div className="grid items-start gap-x-[var(--gutter)] gap-y-12 lg:grid-cols-[1.3fr_1fr] lg:gap-x-20">
+          {/* The work */}
+          <Reveal>
+            <ArtworkPlate
+              imageUrl={artwork.imageUrl}
+              title={artwork.title}
+              dimensions={artwork.dimensions}
+              priority
+            />
+          </Reveal>
 
-              {/* Content */}
-              <div className="space-y-6 md:space-y-8">
-                <div>
-                  <div className="w-12 h-px bg-neutral-300 mb-4 md:mb-6" />
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-light text-neutral-900 tracking-tight mb-4 md:mb-6">
-                    {artwork.title}
-                  </h1>
-                </div>
+          {/* Wall label */}
+          <Reveal delay={80} className="lg:sticky lg:top-28 lg:self-start">
+            <p className="label-sm">Artwork</p>
 
-                {/* Metadata */}
-                <div className="space-y-3 md:space-y-4">
-                  {artwork.year && (
-                    <div className="flex items-center gap-3 text-neutral-700 text-sm md:text-base">
-                      <Calendar className="size-4 md:size-5 text-neutral-400 shrink-0" />
-                      <span className="font-light">{artwork.year}</span>
-                    </div>
-                  )}
-                  
-                  {artwork.medium && (
-                    <div className="flex items-center gap-3 text-neutral-700 text-sm md:text-base">
-                      <Palette className="size-4 md:size-5 text-neutral-400 shrink-0" />
-                      <span className="font-light">{artwork.medium}</span>
-                    </div>
-                  )}
-                  
-                  {artwork.dimensions && (
-                    <div className="flex items-center gap-3 text-neutral-700 text-sm md:text-base">
-                      <Ruler className="size-4 md:size-5 text-neutral-400 shrink-0" />
-                      <span className="font-light">{artwork.dimensions}</span>
-                    </div>
-                  )}
-                </div>
+            <h1 className="font-serif text-h1 mt-5 font-light tracking-[-0.01em] text-ink">
+              {artwork.title}
+            </h1>
 
-                <div className="w-full h-px bg-neutral-200" />
+            <div className="mt-8 h-px w-full bg-rule" aria-hidden="true" />
 
-                {/* Description */}
-                {artwork.description && (
-                  <div className="space-y-3 md:space-y-4">
-                    <h2 className="text-lg md:text-xl font-light text-neutral-900 tracking-wide">
-                      작품 설명
-                    </h2>
-                    <p className="text-sm md:text-base text-neutral-700 font-light leading-relaxed whitespace-pre-wrap">
-                      {artwork.description}
-                    </p>
+            {tombstone.length > 0 && (
+              <dl className="mt-7 space-y-4">
+                {tombstone.map((row) => (
+                  <div
+                    key={row.label}
+                    className="grid grid-cols-[6.5rem_1fr] items-baseline gap-4"
+                  >
+                    <dt className="label-sm">{row.label}</dt>
+                    <dd className="text-meta text-ink">{row.value}</dd>
                   </div>
-                )}
-              </div>
-            </div>
-          </div>
+                ))}
+              </dl>
+            )}
+
+            {artwork.description && (
+              <>
+                <div
+                  className="mt-9 h-px w-full bg-rule"
+                  aria-hidden="true"
+                />
+
+                <div className="mt-7">
+                  <h2 className="label-sm">작품 설명</h2>
+                  <p className="text-body font-serif mt-5 whitespace-pre-wrap text-ink-soft">
+                    {artwork.description}
+                  </p>
+                </div>
+              </>
+            )}
+          </Reveal>
         </div>
       </section>
     </div>

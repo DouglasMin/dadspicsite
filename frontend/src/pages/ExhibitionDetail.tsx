@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { api, type Exhibition, type Artwork } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import FsLightbox from 'fslightbox-react';
-import { Loader2, ArrowLeft, Calendar, MapPin, ExternalLink, Palette } from 'lucide-react';
+import { Loader2, ArrowLeft, Calendar, ExternalLink } from 'lucide-react';
+import { SectionHeading } from '@/components/SectionHeading';
+import { ArtworkCard } from '@/components/ArtworkCard';
+import { Reveal } from '@/components/Reveal';
 
 type ExhibitionStatus = 'ongoing' | 'upcoming' | 'past';
 
@@ -11,12 +14,6 @@ const STATUS_LABEL: Record<ExhibitionStatus, string> = {
   ongoing: '전시회 진행중',
   upcoming: 'Coming Soon',
   past: '마감된 전시회',
-};
-
-const STATUS_STYLE: Record<ExhibitionStatus, string> = {
-  ongoing: 'bg-neutral-900',
-  upcoming: 'bg-neutral-600',
-  past: 'bg-neutral-400',
 };
 
 function getStatus(startDate: string, endDate: string): ExhibitionStatus {
@@ -85,19 +82,23 @@ export function ExhibitionDetail() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 lg:px-6 py-32 text-center">
-        <Loader2 className="size-12 animate-spin text-neutral-900 mx-auto mb-4" />
-        <p className="text-lg text-neutral-600 font-light">전시회를 불러오는 중...</p>
+      <div className="shell py-32 text-center">
+        <Loader2 className="mx-auto mb-5 size-8 animate-spin text-ink-faint" />
+        <p className="text-meta tracking-wide text-ink-soft">전시회를 불러오는 중...</p>
       </div>
     );
   }
 
   if (!exhibition) {
     return (
-      <div className="container mx-auto px-4 lg:px-6 py-32 text-center">
-        <p className="text-xl text-neutral-600 font-light mb-8">전시회를 찾을 수 없습니다</p>
-        <Button variant="outline" onClick={() => navigate('/exhibitions')} className="font-light">
-          <ArrowLeft className="size-4 mr-2" />
+      <div className="shell py-32 text-center">
+        <p className="font-serif text-h2 mb-8 font-normal text-ink">전시회를 찾을 수 없습니다</p>
+        <Button
+          variant="outline"
+          onClick={() => navigate('/exhibitions')}
+          className="pressable text-meta rounded-none border-ink font-normal"
+        >
+          <ArrowLeft className="size-4" />
           전시회 목록으로
         </Button>
       </div>
@@ -109,180 +110,154 @@ export function ExhibitionDetail() {
   const relatedLink = exhibition.relatedLink ?? '';
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Back Button */}
-      <div className="container mx-auto px-6 lg:px-12 pt-8">
+    <div className="min-h-screen bg-wall pb-[var(--space-section)]">
+      {/* Back */}
+      <div className="shell pt-8">
         <Button
           variant="ghost"
           onClick={() => navigate('/exhibitions')}
-          className="font-light text-neutral-600 hover:text-neutral-900 px-0"
+          className="pressable arrow-link text-meta h-auto rounded-none px-0 font-normal text-ink-soft hover:bg-transparent hover:text-ink"
         >
-          <ArrowLeft className="size-4 mr-2" />
+          <ArrowLeft className="size-4" />
           전시회 목록으로
         </Button>
       </div>
 
-      {/* Exhibition Info */}
-      <section className="py-8 md:py-12">
-        <div className="container mx-auto px-6 lg:px-12">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid md:grid-cols-[1fr_1.2fr] gap-8 md:gap-16 items-start">
-              {/* Poster */}
-              <div className="relative">
-                {exhibition.imageUrl ? (
-                  <div className="relative aspect-[4/3] overflow-hidden bg-neutral-100 flex items-center justify-center">
-                    <img
-                      src={exhibition.imageUrl}
-                      alt={exhibition.title}
-                      className="w-full h-full object-contain"
-                    />
-                    <div className="absolute top-6 left-6">
-                      <div className={`px-4 py-2 text-white text-xs font-light tracking-wide uppercase ${STATUS_STYLE[status]}`}>
-                        {STATUS_LABEL[status]}
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="aspect-[4/3] bg-neutral-100 flex items-center justify-center">
-                    <Calendar className="size-12 text-neutral-300" />
-                  </div>
-                )}
-              </div>
+      {/* Masthead */}
+      <header className="shell pt-[var(--space-block)]">
+        <div className="flex items-center gap-2.5">
+          {status === 'ongoing' && (
+            <span className="signal-dot" aria-hidden="true" />
+          )}
+          <span
+            className={`label-sm ${status === 'ongoing' ? 'text-signal' : ''}`}
+          >
+            {STATUS_LABEL[status]}
+          </span>
+        </div>
 
-              {/* Content */}
-              <div className="space-y-6 md:space-y-8">
-                <div>
-                  <div className="w-12 h-px bg-neutral-300 mb-4 md:mb-6" />
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-light text-neutral-900 tracking-tight leading-tight">
-                    {exhibition.title}
-                  </h1>
+        <h1 className="font-serif text-h1 mt-5 max-w-4xl font-light tracking-[-0.01em] text-ink">
+          {exhibition.title}
+        </h1>
+
+        <div className="mt-9 h-px w-full bg-rule" aria-hidden="true" />
+      </header>
+
+      {/* Poster + details */}
+      <section className="shell mt-[var(--space-block)]">
+        <div className="grid items-start gap-x-[var(--gutter)] gap-y-10 md:grid-cols-[0.85fr_1.15fr] md:gap-x-16">
+          <Reveal>
+            <div className="art-plate aspect-[3/4] bg-wall-shade">
+              {exhibition.imageUrl ? (
+                <img
+                  src={exhibition.imageUrl}
+                  alt={exhibition.title}
+                  decoding="async"
+                  className="art-img"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center">
+                  <Calendar className="size-10 text-ink-faint" />
                 </div>
-
-                <div className="space-y-3 md:space-y-4">
-                  <div className="flex items-start gap-3">
-                    <Calendar className="size-4 text-neutral-500 mt-1 shrink-0" />
-                    <div className="space-y-1">
-                      <p className="text-xs font-light tracking-wide uppercase text-neutral-500">
-                        Exhibition Period
-                      </p>
-                      <p className="text-sm md:text-base font-light text-neutral-900">
-                        {formatDate(exhibition.startDate)} - {formatDate(exhibition.endDate)}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <MapPin className="size-4 text-neutral-500 mt-1 shrink-0" />
-                    <div className="space-y-1">
-                      <p className="text-xs font-light tracking-wide uppercase text-neutral-500">
-                        Location
-                      </p>
-                      <p className="text-sm md:text-base font-light text-neutral-900">
-                        {exhibition.location}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-3 md:space-y-4">
-                  <div className="w-12 h-px bg-neutral-300" />
-                  <p className="text-sm md:text-base text-neutral-700 font-light leading-relaxed whitespace-pre-line">
-                    {exhibition.description}
-                  </p>
-                </div>
-
-                {relatedLink && isSafeLink(relatedLink) && (
-                  <a
-                    href={relatedLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-3 border border-neutral-900 text-sm font-light text-neutral-900 transition-colors hover:bg-neutral-900 hover:text-white"
-                  >
-                    관련 링크 바로가기
-                    <ExternalLink className="size-4" />
-                  </a>
-                )}
-              </div>
+              )}
             </div>
-          </div>
+          </Reveal>
+
+          <Reveal delay={80}>
+            <dl className="grid gap-6 sm:grid-cols-2">
+              <div>
+                <dt className="label-sm">Exhibition Period</dt>
+                <dd className="text-meta mt-2 text-ink">
+                  {formatDate(exhibition.startDate)} – {formatDate(exhibition.endDate)}
+                </dd>
+              </div>
+              <div>
+                <dt className="label-sm">Location</dt>
+                <dd className="text-meta mt-2 text-ink">{exhibition.location}</dd>
+              </div>
+            </dl>
+
+            {exhibition.description && (
+              <>
+                <div className="mt-8 h-px w-full bg-rule" aria-hidden="true" />
+                <p className="text-body font-serif mt-7 whitespace-pre-line text-ink-soft">
+                  {exhibition.description}
+                </p>
+              </>
+            )}
+
+            {relatedLink && isSafeLink(relatedLink) && (
+              <a
+                href={relatedLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="pressable text-meta mt-9 inline-flex items-center gap-2.5 border border-ink px-6 py-3 text-ink hover:bg-ink hover:text-paper"
+              >
+                관련 링크 바로가기
+                <ExternalLink className="size-4" />
+              </a>
+            )}
+          </Reveal>
         </div>
       </section>
 
       {/* Related Photos */}
       {photoUrls.length > 0 && (
-        <section className="py-12 md:py-16 border-t border-neutral-200">
-          <div className="container mx-auto px-6 lg:px-12">
-            <div className="max-w-6xl mx-auto">
-              <div className="flex items-center gap-8 mb-10">
-                <div className="w-12 h-px bg-neutral-300" />
-                <h2 className="text-2xl md:text-3xl font-light text-neutral-900 tracking-wide">
-                  Exhibition Photos
-                </h2>
-                <div className="flex-1 h-px bg-neutral-300" />
-              </div>
+        <section className="shell mt-[var(--space-section)]">
+          <Reveal>
+            <SectionHeading
+              index="01"
+              kicker={`${photoUrls.length} ${photoUrls.length === 1 ? 'Image' : 'Images'}`}
+              title="Exhibition Photos"
+            />
+          </Reveal>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-                {photoUrls.map((url, index) => (
-                  <button
-                    key={url}
-                    type="button"
-                    onClick={() => openLightboxOnSlide(index + 1)}
-                    className="group relative aspect-[4/3] overflow-hidden bg-neutral-100"
-                  >
+          <div className="mt-[var(--space-block)] grid grid-cols-2 items-start gap-[var(--gutter)] md:grid-cols-3">
+            {photoUrls.map((url, index) => (
+              <Reveal key={url} delay={(index % 3) * 60}>
+                <button
+                  type="button"
+                  onClick={() => openLightboxOnSlide(index + 1)}
+                  className="art block w-full"
+                  aria-label={`${exhibition.title} 관련 사진 ${index + 1} 크게 보기`}
+                >
+                  <div className="art-plate aspect-[4/3]">
                     <img
                       src={url}
                       alt={`${exhibition.title} 관련 사진 ${index + 1}`}
                       loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      decoding="async"
+                      className="h-full w-full object-cover"
                     />
-                  </button>
-                ))}
-              </div>
-            </div>
+                  </div>
+                </button>
+              </Reveal>
+            ))}
           </div>
         </section>
       )}
 
       {/* Exhibited Artworks */}
       {artworks.length > 0 && (
-        <section className="py-12 md:py-16 border-t border-neutral-200">
-          <div className="container mx-auto px-6 lg:px-12">
-            <div className="max-w-6xl mx-auto">
-              <div className="flex items-center gap-8 mb-10">
-                <div className="w-12 h-px bg-neutral-300" />
-                <h2 className="text-2xl md:text-3xl font-light text-neutral-900 tracking-wide">
-                  Exhibited Works
-                </h2>
-                <div className="flex-1 h-px bg-neutral-300" />
-              </div>
+        <section className="shell mt-[var(--space-section)]">
+          <Reveal>
+            <SectionHeading
+              index={photoUrls.length > 0 ? '02' : '01'}
+              kicker={`${artworks.length} ${artworks.length === 1 ? 'Work' : 'Works'}`}
+              title="Exhibited Works"
+            />
+          </Reveal>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
-                {artworks.map((artwork) => (
-                  <Link key={artwork.id} to={`/artwork/${artwork.id}`} className="group block">
-                    <div className="aspect-[3/4] overflow-hidden bg-neutral-100 mb-4">
-                      {artwork.imageUrl ? (
-                        <img
-                          src={artwork.imageUrl}
-                          alt={artwork.title}
-                          loading="lazy"
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Palette className="size-10 text-neutral-300" />
-                        </div>
-                      )}
-                    </div>
-                    <h3 className="text-base font-light text-neutral-900 group-hover:text-neutral-600 transition-colors">
-                      {artwork.title}
-                    </h3>
-                    <p className="text-xs text-neutral-500 font-light mt-1">
-                      {artwork.year} • {artwork.medium}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-            </div>
+          <div className="mt-[var(--space-block)] grid grid-cols-2 items-start gap-x-[var(--gutter)] gap-y-14 md:grid-cols-3">
+            {artworks.map((artwork, index) => (
+              <Reveal key={artwork.id} delay={(index % 3) * 60}>
+                <ArtworkCard
+                  artwork={artwork}
+                  to={`/artwork/${artwork.id}`}
+                  size="sm"
+                />
+              </Reveal>
+            ))}
           </div>
         </section>
       )}

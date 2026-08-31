@@ -1,3 +1,7 @@
+/* Display: Noto Serif KR — covers Latin + Hangul so Korean and English headings
+   share one voice. Caption: Inter (Latin) with a Korean system fallback.
+   Both variable, both font-display:swap via Google's default. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400..600&family=Noto+Serif+KR:wght@300..600&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -39,36 +43,92 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Museum-editorial surfaces, layered on top of the existing warm palette */
+  --color-wall: var(--wall);
+  --color-wall-shade: var(--wall-shade);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-rule: var(--rule);
+  --color-rule-soft: var(--rule-soft);
+  --color-signal: var(--signal);
+}
+
+@theme {
+  /* ——— Type pairing ——————————————————————————————————————————————
+     Serif carries every heading (Hangul included). Sans is reserved for
+     small tracked labels, metadata and UI. */
+  --font-serif: 'Noto Serif KR', ui-serif, Georgia, 'Nanum Myeongjo', serif;
+  --font-sans: 'Inter', 'Pretendard', -apple-system, BlinkMacSystemFont,
+    'Apple SD Gothic Neo', 'Malgun Gothic', 'Segoe UI', Roboto, sans-serif;
+
+  /* ——— Type scale ——————————————————————————————————————————————— */
+  --text-label: 0.6875rem;
+  --text-label--line-height: 1.45;
+  --text-label--letter-spacing: 0.18em;
+
+  --text-meta: 0.8125rem;
+  --text-meta--line-height: 1.6;
+
+  --text-body: clamp(0.9375rem, 0.91rem + 0.14vw, 1.0625rem);
+  --text-body--line-height: 1.85;
+
+  --text-lede: clamp(1.0625rem, 0.98rem + 0.4vw, 1.25rem);
+  --text-lede--line-height: 1.8;
+
+  --text-h3: clamp(1.125rem, 1.04rem + 0.42vw, 1.4375rem);
+  --text-h3--line-height: 1.4;
+
+  --text-h2: clamp(1.625rem, 1.24rem + 1.6vw, 2.625rem);
+  --text-h2--line-height: 1.24;
+
+  --text-h1: clamp(2.125rem, 1.42rem + 2.9vw, 4rem);
+  --text-h1--line-height: 1.12;
+
+  --text-display: clamp(2.5rem, 1.32rem + 4.9vw, 5.75rem);
+  --text-display--line-height: 1.06;
+
+  /* ——— Motion —————————————————————————————————————————————————————
+     Built-in CSS easings are too weak; these are the only two curves used. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 :root {
   --radius: 0.5rem;
-  /* Soft warm gray background - balanced and sophisticated */
-  --background: oklch(0.92 0.008 75);
-  --foreground: oklch(0.25 0.015 240);
-  /* Slightly lighter card surface */
-  --card: oklch(0.95 0.005 75);
-  --card-foreground: oklch(0.25 0.015 240);
-  --popover: oklch(0.95 0.005 75);
-  --popover-foreground: oklch(0.25 0.015 240);
-  /* Deep charcoal primary - elegant contrast */
-  --primary: oklch(0.35 0.02 240);
-  --primary-foreground: oklch(0.98 0.005 75);
-  /* Muted warm gray for secondary elements */
+
+  /* ——— Gallery-wall surfaces ——— */
+  --wall: oklch(0.92 0.008 75);
+  --wall-shade: oklch(0.889 0.011 72);
+  --paper: oklch(0.963 0.006 82);
+  --ink: oklch(0.215 0.014 250);
+  --ink-soft: oklch(0.455 0.013 250);
+  --ink-faint: oklch(0.615 0.012 250);
+  --rule: oklch(0.795 0.012 75);
+  --rule-soft: oklch(0.858 0.010 75);
+  /* Reserved for live state only (an exhibition that is open right now). */
+  --signal: oklch(0.545 0.155 34);
+
+  --background: var(--wall);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: oklch(0.265 0.016 250);
+  --primary-foreground: oklch(0.975 0.005 80);
   --secondary: oklch(0.88 0.01 75);
   --secondary-foreground: oklch(0.3 0.015 240);
-  /* Subtle muted tones */
   --muted: oklch(0.88 0.01 75);
-  --muted-foreground: oklch(0.5 0.015 240);
-  /* Soft accent - warm taupe */
+  --muted-foreground: var(--ink-soft);
   --accent: oklch(0.85 0.015 60);
   --accent-foreground: oklch(0.3 0.015 240);
   --destructive: oklch(0.577 0.245 27.325);
-  /* Minimal borders */
-  --border: oklch(0.82 0.01 75);
+  --border: var(--rule);
   --input: oklch(0.88 0.01 75);
   --ring: oklch(0.5 0.02 240);
-  /* Refined chart colors */
   --chart-1: oklch(0.55 0.15 25);
   --chart-2: oklch(0.6 0.12 200);
   --chart-3: oklch(0.52 0.14 120);
@@ -82,31 +142,37 @@
   --sidebar-accent-foreground: oklch(0.3 0.015 240);
   --sidebar-border: oklch(0.82 0.01 75);
   --sidebar-ring: oklch(0.5 0.02 240);
+
+  /* ——— Spacing rhythm ——— */
+  --gutter: clamp(1.25rem, 0.7rem + 2.4vw, 3.5rem);
+  --space-section: clamp(4.5rem, 3rem + 6vw, 9rem);
+  --space-block: clamp(2rem, 1.4rem + 2.4vw, 4rem);
+
+  /* ——— Motion durations ———
+     UI stays under 300ms; only scroll-reveal is allowed to run long. */
+  --dur-press: 140ms;
+  --dur-hover: 180ms;
+  --dur-ui: 220ms;
+  --dur-panel: 240ms;
+  --dur-reveal: 700ms;
 }
 
 .dark {
-  /* Rich dark background with slight warmth */
   --background: oklch(0.15 0.015 60);
   --foreground: oklch(0.95 0.01 85);
-  /* Elevated card surface */
   --card: oklch(0.2 0.02 60);
   --card-foreground: oklch(0.95 0.01 85);
   --popover: oklch(0.2 0.02 60);
   --popover-foreground: oklch(0.95 0.01 85);
-  /* Warm off-white primary for dark mode */
   --primary: oklch(0.88 0.02 75);
   --primary-foreground: oklch(0.2 0.02 60);
-  /* Darker secondary */
   --secondary: oklch(0.25 0.02 60);
   --secondary-foreground: oklch(0.95 0.01 85);
-  /* Muted with warmth */
   --muted: oklch(0.25 0.02 60);
   --muted-foreground: oklch(0.65 0.02 75);
-  /* Accent with terracotta warmth */
   --accent: oklch(0.3 0.04 50);
   --accent-foreground: oklch(0.95 0.01 85);
   --destructive: oklch(0.704 0.191 22.216);
-  /* Subtle borders in dark mode */
   --border: oklch(0.3 0.02 60);
   --input: oklch(0.25 0.02 60);
   --ring: oklch(0.65 0.04 60);
@@ -129,13 +195,33 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Korean text should never break mid-syllable-cluster. */
+  p,
+  h1,
+  h2,
+  h3,
+  h4 {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  ::selection {
+    background: var(--ink);
+    color: var(--paper);
   }
 
   /* Floating animation for decorative bird elements */
   @keyframes float {
-    0%, 100% {
+    0%,
+    100% {
       transform: translateY(0) rotate(0deg);
     }
     25% {
@@ -146,6 +232,555 @@
     }
     75% {
       transform: translateY(-15px) rotate(1deg);
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Layout primitives
+   ═══════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .shell {
+    width: 100%;
+    max-width: 84rem;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .shell-tight {
+    width: 100%;
+    max-width: 62rem;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* Reading measure for long-form Korean prose. */
+  .shell-read {
+    width: 100%;
+    max-width: 44rem;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* ——— Editorial type helpers ——— */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: var(--text-label);
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .label-sm {
+    font-family: var(--font-sans);
+    font-size: var(--text-label);
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* Section index numeral — 01 / 02 / 03 — an editorial anchor. */
+  .index-num {
+    font-family: var(--font-sans);
+    font-size: var(--text-label);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rule-hair {
+    height: 1px;
+    background: var(--rule);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Motion
+   Every rule below names its exact properties. Nothing animates layout.
+   ═══════════════════════════════════════════════════════════════════ */
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    clip-path: inset(0 -24px 100% -24px);
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 -24px -24px -24px);
+    transform: translateY(0);
+  }
+}
+
+@keyframes reveal-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scroll-cue {
+  0% {
+    transform: translateY(-100%) scaleY(0.4);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%) scaleY(0.4);
+    opacity: 0;
+  }
+}
+
+@keyframes signal-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+@layer components {
+  /* ——— Scroll-entry reveal ————————————————————————————————————————
+     Purpose: explanation. A long editorial page hands you one movement at
+     a time instead of dumping the whole column. Fires once per element. */
+  @media (prefers-reduced-motion: no-preference) {
+    /* The resting state must not use `clip-path`: an element clipped to
+       nothing is not "intersecting", so the observer that is supposed to
+       reveal it would never fire. Opacity and transform are ignored by
+       IntersectionObserver, so the curtain lives in the keyframes instead. */
+    .reveal {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    .reveal[data-revealed='true'] {
+      opacity: 1;
+      clip-path: none;
+      transform: none;
+      animation: reveal-in var(--dur-reveal) var(--ease-out)
+        var(--reveal-delay, 0ms) backwards;
+    }
+  }
+
+  /* Reduced motion keeps the arrival, drops the travel. */
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 0;
+    }
+
+    .reveal[data-revealed='true'] {
+      opacity: 1;
+      animation: reveal-fade 320ms var(--ease-out) backwards;
+    }
+  }
+
+  /* ——— Artwork plate ——————————————————————————————————————————————
+     The painting hangs on the wall. No crop, no chrome, no caption bar.
+     Purpose of the hover: feedback — the work steps a hair off the wall. */
+  .art {
+    display: block;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+  }
+
+  .art-plate {
+    position: relative;
+    overflow: hidden;
+    background: color-mix(in oklab, var(--wall) 95%, black);
+    box-shadow:
+      0 1px 2px oklch(0.2 0.01 250 / 0.09),
+      0 8px 20px -12px oklch(0.2 0.01 250 / 0.22);
+    transition:
+      transform var(--dur-ui) var(--ease-out),
+      box-shadow var(--dur-ui) ease;
+  }
+
+  .art-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .art-caption {
+    padding-top: 1.125rem;
+    transition: transform var(--dur-hover) var(--ease-out);
+  }
+
+  .art-rule {
+    display: block;
+    height: 1px;
+    width: 2.75rem;
+    background: var(--rule);
+    transform: scaleX(0.55);
+    transform-origin: left center;
+    transition:
+      transform 260ms var(--ease-out),
+      background-color var(--dur-hover) ease;
+  }
+
+  .art-meta {
+    opacity: 0.58;
+    transform: translateY(3px);
+    transition:
+      opacity var(--dur-hover) var(--ease-out),
+      transform var(--dur-hover) var(--ease-out);
+  }
+
+  .art-zoom {
+    opacity: 0;
+    transform: scale(0.94);
+    transition:
+      opacity var(--dur-hover) var(--ease-out),
+      transform var(--dur-hover) var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .art:hover .art-plate {
+      transform: translateY(-3px);
+      box-shadow:
+        0 2px 4px oklch(0.2 0.01 250 / 0.1),
+        0 18px 38px -16px oklch(0.2 0.01 250 / 0.32);
+    }
+
+    .art:hover .art-caption {
+      transform: translateY(-2px);
+    }
+
+    .art:hover .art-rule {
+      transform: scaleX(1);
+      background: var(--ink);
+    }
+
+    .art:hover .art-meta {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .art:hover .art-zoom,
+    .art-zoom:focus-visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Touch: nothing is hidden behind a hover that will never happen. */
+  @media (hover: none), (pointer: coarse) {
+    .art-meta {
+      opacity: 0.82;
+      transform: none;
+    }
+
+    .art-zoom {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Press feedback. Large surfaces scale less than buttons do. */
+  .art:active .art-plate {
+    transform: translateY(-1px) scale(0.985);
+    transition-duration: var(--dur-press);
+  }
+
+  .art:focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: 6px;
+  }
+
+  /* ——— Pressable ——————————————————————————————————————————————————
+     Purpose: feedback. Applied to buttons and link-buttons. */
+  .pressable {
+    transition:
+      transform var(--dur-press) var(--ease-out),
+      background-color var(--dur-hover) ease,
+      border-color var(--dur-hover) ease,
+      color var(--dur-hover) ease;
+  }
+
+  .pressable:active {
+    transform: scale(0.97);
+  }
+
+  /* ——— Nav link ————————————————————————————————————————————————————
+     High frequency, so the motion is almost imperceptible: a hairline
+     that draws in from the left. Purpose: state indication. */
+  .nav-link {
+    position: relative;
+    color: var(--ink-soft);
+    transition: color var(--dur-hover) ease;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.4rem;
+    height: 1px;
+    background: var(--ink);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--dur-hover) ease;
+  }
+
+  .nav-link[data-active='true'] {
+    color: var(--ink);
+  }
+
+  .nav-link[data-active='true']::after {
+    transform: scaleX(1);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .nav-link:hover {
+      color: var(--ink);
+    }
+
+    .nav-link:hover::after {
+      transform: scaleX(1);
+    }
+  }
+
+  .nav-link:focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: 6px;
+  }
+
+  /* ——— Header ——————————————————————————————————————————————————————
+     Transparent over the top of the page, gaining a hairline and a blur
+     once you leave it. Purpose: preventing a jarring change. */
+  .site-header {
+    transition:
+      background-color var(--dur-ui) ease,
+      border-color var(--dur-ui) ease,
+      backdrop-filter var(--dur-ui) ease;
+    border-bottom: 1px solid transparent;
+  }
+
+  .site-header[data-stuck='true'] {
+    background-color: color-mix(in oklab, var(--wall) 88%, transparent);
+    backdrop-filter: saturate(1.4) blur(14px);
+    border-bottom-color: var(--rule-soft);
+  }
+
+  /* ——— Mobile menu ——————————————————————————————————————————————
+     Purpose: spatial consistency — it belongs to the header it drops from. */
+  .menu-panel {
+    animation: reveal-fade var(--dur-panel) var(--ease-out) backwards;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .menu-panel {
+      animation:
+        reveal-fade var(--dur-panel) var(--ease-out) backwards,
+        menu-drop var(--dur-panel) var(--ease-out) backwards;
+    }
+
+    @keyframes menu-drop {
+      from {
+        transform: translateY(-8px);
+      }
+      to {
+        transform: translateY(0);
+      }
+    }
+
+    .menu-item {
+      animation: menu-item-in var(--dur-panel) var(--ease-out)
+        var(--reveal-delay, 0ms) backwards;
+    }
+
+    @keyframes menu-item-in {
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+
+  /* ——— Scroll cue ——————————————————————————————————————————————————
+     Purpose: explanation — there is more page below the fold. */
+  .scroll-cue {
+    position: relative;
+    display: block;
+    width: 1px;
+    height: 3.5rem;
+    overflow: hidden;
+    background: var(--rule);
+  }
+
+  .scroll-cue::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    transform: translateY(-100%);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .scroll-cue::after {
+      animation: scroll-cue 2.6s var(--ease-in-out) infinite;
+    }
+  }
+
+  /* ——— Live-state dot ——————————————————————————————————————————————
+     The one place chroma is allowed. Purpose: state indication. */
+  .signal-dot {
+    position: relative;
+    display: inline-block;
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border-radius: 9999px;
+    background: var(--signal);
+    flex-shrink: 0;
+  }
+
+  .signal-dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--signal);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .signal-dot::after {
+      animation: signal-pulse 2.4s var(--ease-in-out) infinite;
+    }
+  }
+
+  /* ——— Arrow links ——————————————————————————————————————————————— */
+  .arrow-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--ink);
+    transition: color var(--dur-hover) ease;
+  }
+
+  .arrow-link svg {
+    transition: transform var(--dur-ui) var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .arrow-link:hover {
+      color: var(--ink-soft);
+    }
+
+    .arrow-link:hover svg {
+      transform: translateX(4px);
+    }
+  }
+
+  .arrow-link:active svg {
+    transform: translateX(2px);
+    transition-duration: var(--dur-press);
+  }
+
+  /* ——— Press / news entry ——————————————————————————————————————— */
+  .press-item {
+    transition: background-color var(--dur-ui) ease;
+  }
+
+  .press-thumb {
+    overflow: hidden;
+    background: var(--wall-shade);
+  }
+
+  .press-thumb img {
+    transition: transform 420ms var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .press-item:hover .press-thumb img {
+      transform: scale(1.03);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .press-thumb img {
+      transition: none;
+    }
+
+    .press-item:hover .press-thumb img {
+      transform: none;
+    }
+  }
+
+  /* ——— Reduced motion: keep colour and opacity, drop travel ——————— */
+  @media (prefers-reduced-motion: reduce) {
+    .art-plate,
+    .art-caption,
+    .art-meta,
+    .art-rule {
+      transition-property: opacity, box-shadow, color;
+    }
+
+    .art:hover .art-plate,
+    .art:active .art-plate,
+    .art:hover .art-caption {
+      transform: none;
+    }
+
+    .art-meta {
+      transform: none;
+    }
+
+    .art-rule {
+      transform: scaleX(1);
+    }
+
+    .pressable {
+      transition-property: background-color, border-color, color;
+    }
+
+    .pressable:active {
+      transform: none;
+    }
+
+    .arrow-link svg,
+    .arrow-link:hover svg,
+    .arrow-link:active svg {
+      transform: none;
+      transition: none;
+    }
+
+    .nav-link::after {
+      transition: none;
+    }
+
+    .scroll-cue::after {
+      transform: none;
+      opacity: 0.5;
+    }
+
+    .signal-dot::after {
+      display: none;
+    }
+
+    [class*='animate-[float'] {
+      animation: none !important;
     }
   }
 }

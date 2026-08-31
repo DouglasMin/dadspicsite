@@ -1,4 +1,6 @@
-import { ExternalLink, Newspaper, TrendingUp } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
+import { SectionHeading } from '@/components/SectionHeading';
+import { Reveal } from '@/components/Reveal';
 
 interface NewsItem {
     id: string;
@@ -39,122 +41,68 @@ export function RecentNews() {
     }
 
     return (
-        <section className="relative py-32 bg-gradient-to-b from-background via-card/20 to-background overflow-hidden">
-            {/* Decorative background elements */}
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-20 right-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
-                <div className="absolute bottom-20 left-10 w-96 h-96 bg-primary/3 rounded-full blur-3xl" />
-            </div>
+        <section className="shell py-[var(--space-section)]">
+            <Reveal>
+                <SectionHeading index="03" kicker="Press & Media" title="최근 소식" />
+                <p className="text-body mt-6 max-w-xl text-ink-soft">
+                    언론에 소개된 작가의 이야기와 전시 소식을 만나보세요
+                </p>
+            </Reveal>
 
-            <div className="container mx-auto px-6 lg:px-12 relative">
-                <div className="max-w-6xl mx-auto">
-                    {/* Enhanced Section header */}
-                    <div className="mb-20 text-center">
-                        <div className="inline-flex items-center gap-3 px-5 py-2 bg-primary/10 border border-primary/20 rounded-full mb-6">
-                            <TrendingUp className="size-4 text-primary" />
-                            <span className="text-sm font-medium text-primary tracking-wide">PRESS & MEDIA</span>
-                        </div>
-
-                        <h2 className="text-4xl md:text-5xl font-light text-foreground mb-4 tracking-tight">
-                            최근 소식
-                        </h2>
-
-                        <p className="text-muted-foreground font-light max-w-2xl mx-auto">
-                            언론에 소개된 작가의 이야기와 전시 소식을 만나보세요
-                        </p>
-                    </div>
-
-                    {/* Enhanced News grid */}
-                    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                        {newsItems.map((news, index) => (
+            <ul className="mt-[var(--space-block)] border-t border-rule">
+                {newsItems.map((news, index) => (
+                    <li key={news.id} className="border-b border-rule">
+                        <Reveal delay={index * 60}>
                             <a
-                                key={news.id}
                                 href={news.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="group block"
-                                style={{
-                                    animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
-                                }}
+                                className="press-item group grid items-start gap-x-[var(--gutter)] gap-y-5 py-8 md:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)] md:gap-x-12"
                             >
-                                <article className="relative h-full bg-card border border-border/50 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
-                                    {/* Thumbnail with overlay */}
-                                    {news.thumbnailUrl && (
-                                        <div className="relative aspect-[16/10] overflow-hidden bg-neutral-900">
-                                            <img
-                                                src={news.thumbnailUrl}
-                                                alt={news.title}
-                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                                            />
-                                            {/* Gradient overlay */}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
+                                {news.thumbnailUrl && (
+                                    <div className="press-thumb aspect-[16/10]">
+                                        <img
+                                            src={news.thumbnailUrl}
+                                            alt=""
+                                            loading="lazy"
+                                            decoding="async"
+                                            className="h-full w-full object-cover"
+                                        />
+                                    </div>
+                                )}
 
-                                            {/* Floating badge */}
-                                            <div className="absolute top-4 left-4">
-                                                <div className="flex items-center gap-2 px-3 py-1.5 bg-white/95 backdrop-blur-sm rounded-full shadow-lg">
-                                                    <Newspaper className="size-3.5 text-primary" />
-                                                    <span className="text-xs font-medium text-foreground">
-                                                        {news.source}
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                            {/* External link indicator */}
-                                            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                <div className="p-2 bg-white/95 backdrop-blur-sm rounded-full shadow-lg">
-                                                    <ExternalLink className="size-4 text-primary" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Content */}
-                                    <div className="p-6 space-y-4">
-                                        {/* Date */}
-                                        <time className="text-xs text-muted-foreground font-light tracking-wide">
+                                <div className={news.thumbnailUrl ? '' : 'md:col-span-2'}>
+                                    <div className="flex items-center gap-3">
+                                        <span className="label-sm">{news.source}</span>
+                                        <span
+                                            className="h-px w-5 bg-rule"
+                                            aria-hidden="true"
+                                        />
+                                        <time className="text-meta tabular-nums text-ink-faint">
                                             {news.date}
                                         </time>
-
-                                        {/* Title */}
-                                        <h3 className="text-xl font-light text-foreground group-hover:text-primary transition-colors duration-300 leading-snug line-clamp-2">
-                                            {news.title}
-                                        </h3>
-
-                                        {/* Description */}
-                                        {news.description && (
-                                            <p className="text-sm text-muted-foreground font-light leading-relaxed line-clamp-3">
-                                                {news.description}
-                                            </p>
-                                        )}
-
-                                        {/* Read more indicator */}
-                                        <div className="flex items-center gap-2 text-sm text-primary font-light pt-2">
-                                            <span>기사 읽기</span>
-                                            <ExternalLink className="size-4 group-hover:translate-x-1 transition-transform duration-300" />
-                                        </div>
                                     </div>
 
-                                    {/* Decorative corner accent */}
-                                    <div className="absolute bottom-0 right-0 w-24 h-24 bg-primary/5 rounded-tl-full transform translate-x-12 translate-y-12 group-hover:translate-x-8 group-hover:translate-y-8 transition-transform duration-500" />
-                                </article>
-                            </a>
-                        ))}
-                    </div>
-                </div>
-            </div>
+                                    <h3 className="font-serif text-h3 mt-4 leading-snug font-normal text-ink transition-colors duration-200 ease-out group-hover:text-ink-soft">
+                                        {news.title}
+                                    </h3>
 
-            <style>{`
-                @keyframes fadeInUp {
-                    from {
-                        opacity: 0;
-                        transform: translateY(30px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-            `}</style>
+                                    {news.description && (
+                                        <p className="text-meta mt-4 leading-relaxed text-ink-soft">
+                                            {news.description}
+                                        </p>
+                                    )}
+
+                                    <span className="arrow-link text-meta mt-6">
+                                        기사 읽기
+                                        <ExternalLink className="size-4" />
+                                    </span>
+                                </div>
+                            </a>
+                        </Reveal>
+                    </li>
+                ))}
+            </ul>
         </section>
     );
 }

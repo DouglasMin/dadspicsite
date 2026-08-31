@@ -1,13 +1,31 @@
 import { useEffect, useState, useMemo, useRef } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { api, type Artwork } from '@/lib/api';
 
-import { Loader2, Image as ImageIcon, Eye, Search } from 'lucide-react';
+import { Loader2, Search, ArrowLeft, ArrowRight } from 'lucide-react';
 import FsLightbox from 'fslightbox-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { PageMasthead } from '@/components/SectionHeading';
+import { ArtworkCard } from '@/components/ArtworkCard';
+import { Reveal } from '@/components/Reveal';
 
 const ITEMS_PER_PAGE = 9;
+
+/**
+ * Salon hang. Six placements repeat across a 12-column grid so no two
+ * neighbours share a width, and every second work drops below its partner's
+ * top edge. Combined with each painting's true proportions this gives the
+ * page a wall rhythm instead of a card grid.
+ */
+const HANG = [
+  'md:col-start-1 md:col-span-5',
+  'md:col-start-7 md:col-span-6 md:mt-[clamp(2rem,6vw,7rem)]',
+  'md:col-start-2 md:col-span-4',
+  'md:col-start-8 md:col-span-5 md:mt-[clamp(1.5rem,4vw,5rem)]',
+  'md:col-start-1 md:col-span-6',
+  'md:col-start-8 md:col-span-4 md:mt-[clamp(2rem,7vw,8rem)]',
+];
 
 export function Gallery() {
   const [artworks, setArtworks] = useState<Artwork[]>([]);
@@ -16,7 +34,6 @@ export function Gallery() {
     toggler: false,
     slide: 1
   });
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const artworkRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
@@ -54,6 +71,12 @@ export function Gallery() {
     );
   }, [artworks, searchTerm]);
 
+  // 라이트박스는 이미지가 있는 작품만 표시하므로 슬라이드 번호도 같은 목록을 기준으로 계산
+  const lightboxSources = useMemo(
+    () => artworks.filter(artwork => artwork.imageUrl).map(artwork => artwork.imageUrl),
+    [artworks]
+  );
+
   // URL 쿼리 파라미터에서 페이지 정보 읽기
   // returnToArtworkId가 있으면 작품 ID로 페이지를 찾으므로 page 파라미터는 무시
   useEffect(() => {
@@ -62,7 +85,7 @@ export function Gallery() {
       // returnToArtworkId가 있으면 작품 ID로 페이지를 찾는 로직이 처리함
       return;
     }
-    
+
     const pageParam = searchParams.get('page');
     if (pageParam) {
       const page = parseInt(pageParam, 10);
@@ -81,12 +104,12 @@ export function Gallery() {
       if (artworkIndex !== -1) {
         // 작품이 있는 페이지 계산 (1-based)
         const targetPage = Math.ceil((artworkIndex + 1) / ITEMS_PER_PAGE);
-        
+
         // 페이지가 다르면 변경
         if (targetPage !== currentPage) {
           setCurrentPage(targetPage);
         }
-        
+
         // 페이지가 변경된 후 스크롤 (약간의 지연 필요)
         const scrollTimeout = setTimeout(() => {
           const element = artworkRefs.current[returnToArtworkId];
@@ -98,7 +121,7 @@ export function Gallery() {
             setSearchParams(newSearchParams, { replace: true });
           }
         }, 300);
-        
+
         return () => clearTimeout(scrollTimeout);
       }
     }
@@ -133,146 +156,139 @@ export function Gallery() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 lg:px-6 py-32 text-center">
-        <Loader2 className="size-12 animate-spin text-primary mx-auto mb-4" />
-        <p className="text-lg text-muted-foreground">갤러리를 불러오는 중...</p>
+      <div className="shell py-32 text-center">
+        <Loader2 className="mx-auto mb-5 size-8 animate-spin text-ink-faint" />
+        <p className="text-meta tracking-wide text-ink-soft">갤러리를 불러오는 중...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Page Header - Minimal */}
-      <section className="py-20 bg-background border-b border-border/30">
-        <div className="container mx-auto px-6 lg:px-12">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="mb-8">
-              <div className="w-16 h-px bg-primary/50 mx-auto mb-8" />
-              <h1 className="text-5xl md:text-6xl font-light text-foreground tracking-tight mb-6">
-                Gallery
-              </h1>
-              <p className="text-lg text-muted-foreground font-light leading-relaxed max-w-2xl mx-auto">
-                현대미술의 다양한 시각과 감성을 담은 작품들을 만나보세요.<br />
-                각 작품이 전하는 고유한 이야기를 발견해보세요.
-              </p>
-            </div>
+    <div className="min-h-screen bg-wall pb-[var(--space-section)]">
+      <PageMasthead
+        title="Gallery"
+        aside={
+          <div>
+            <p className="font-serif text-h2 leading-none text-ink">
+              {artworks.length}
+            </p>
+            <p className="label-sm mt-2">Works</p>
+          </div>
+        }
+      >
+        현대미술의 다양한 시각과 감성을 담은 작품들을 만나보세요.
+        <br />각 작품이 전하는 고유한 이야기를 발견해보세요.
+      </PageMasthead>
+
+      {/* Filter bar */}
+      <div className="shell mt-[var(--space-block)]">
+        <div className="flex flex-col gap-5 border-b border-rule pb-5 sm:flex-row sm:items-end sm:justify-between sm:gap-10">
+          <h2 className="font-serif text-h3 font-normal text-ink">
+            All Artworks
+          </h2>
+
+          <div className="relative w-full sm:max-w-xs">
+            <Search
+              className="pointer-events-none absolute top-1/2 left-0 size-4 -translate-y-1/2 text-ink-faint"
+              aria-hidden="true"
+            />
+            <Input
+              type="search"
+              aria-label="작품 검색"
+              placeholder="작품을 검색하세요"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1); // Reset to first page on new search
+              }}
+              className="h-10 rounded-none border-0 border-b border-transparent bg-transparent pl-7 text-meta shadow-none transition-colors duration-200 ease-out placeholder:text-ink-faint focus-visible:border-ink focus-visible:ring-0"
+            />
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Gallery Grid - Minimal Style */}
-      <section className="py-24">
-        <div className="container mx-auto px-6 lg:px-12">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-12">
-            <h2 className="text-3xl font-light text-foreground mb-6 md:mb-0">All Artworks</h2>
-            <div className="w-full md:w-auto md:max-w-xs">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
-                <Input
-                  type="text"
-                  placeholder="작품을 검색하세요"
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setCurrentPage(1); // Reset to first page on new search
-                  }}
-                  className="pl-10 w-full bg-card border-border focus:ring-primary"
-                />
-              </div>
-            </div>
-          </div>
-
-          {paginatedArtworks.length === 0 ? (
-            <div className="text-center py-32">
-              <div className="w-16 h-16 border border-border rounded-full flex items-center justify-center mx-auto mb-8">
-                <ImageIcon className="size-6 text-muted-foreground" />
-              </div>
-              <p className="text-xl font-light text-foreground mb-4">
-                {searchTerm ? 'No results found.' : 'Coming Soon'}
-              </p>
-              <p className="text-sm text-muted-foreground font-light">
-                {searchTerm ? 'Try a different search term.' : 'New artworks will be available soon.'}
-              </p>
-            </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-                {paginatedArtworks.map((artwork) => (
-                  <div
-                    key={artwork.id}
-                    ref={(el) => { artworkRefs.current[artwork.id] = el; }}
-                    className="group cursor-pointer"
-                    onClick={() => navigate(`/artwork/${artwork.id}?fromPage=${currentPage}`)}
-                  >
-                    {/* Image Container */}
-                    {artwork.imageUrl ? (
-                      <div className="relative aspect-[3/4] overflow-hidden bg-neutral-800 mb-6 rounded-sm border border-neutral-700/50">
-                        <img
-                          src={artwork.imageUrl}
-                          alt={artwork.title}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-
-                        {/* Subtle overlay */}
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-500" />
-
-                        {/* Action button */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            const originalIndex = artworks.findIndex(a => a.id === artwork.id);
-                            openLightboxOnSlide(originalIndex + 1);
-                          }}
-                          className="absolute top-4 right-4 w-10 h-10 bg-white/90 hover:bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center"
-                          title="Zoom In"
-                        >
-                          <Eye className="size-4 text-neutral-900" />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="aspect-[3/4] bg-neutral-800 flex items-center justify-center mb-6 rounded-sm border border-neutral-700/50">
-                        <ImageIcon className="size-12 text-neutral-600" />
-                      </div>
-                    )}
-
-                    {/* Content */}
-                    <div className="space-y-3 text-center bg-neutral-900/50 p-4 rounded-sm">
-                      <h3 className="text-lg font-medium text-neutral-100 tracking-wide group-hover:text-primary transition-colors">
-                        {artwork.title}
-                      </h3>
-                      <div className="flex items-center justify-center gap-3 text-sm text-neutral-400 font-light">
-                        <span>{artwork.year}</span>
-                        <div className="w-px h-3 bg-neutral-700" />
-                        <span>{artwork.medium}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex justify-center items-center gap-4 mt-16">
-                  <Button onClick={handlePrevPage} disabled={currentPage === 1} variant="outline" className="hover:bg-primary hover:text-primary-foreground">
-                    이전 페이지
-                  </Button>
-                  <span className="text-sm text-muted-foreground">
-                    {currentPage} / {totalPages}
-                  </span>
-                  <Button onClick={handleNextPage} disabled={currentPage === totalPages} variant="outline" className="hover:bg-primary hover:text-primary-foreground">
-                    다음 페이지
-                  </Button>
+      {paginatedArtworks.length === 0 ? (
+        <div className="shell py-32 text-center">
+          <p className="font-serif text-h2 font-normal text-ink">
+            {searchTerm ? 'No results found.' : 'Coming Soon'}
+          </p>
+          <p className="text-meta mt-4 text-ink-soft">
+            {searchTerm ? 'Try a different search term.' : 'New artworks will be available soon.'}
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="shell mt-[var(--space-block)]">
+            <div className="grid grid-cols-1 items-start gap-x-[var(--gutter)] gap-y-[clamp(3.5rem,2rem+5vw,7rem)] md:grid-cols-12">
+              {paginatedArtworks.map((artwork, index) => (
+                <div
+                  key={artwork.id}
+                  ref={(el) => { artworkRefs.current[artwork.id] = el; }}
+                  className={`${HANG[index % HANG.length]} ${
+                    index % 3 === 2 ? 'max-md:mx-8' : ''
+                  }`}
+                >
+                  <Reveal delay={(index % 3) * 60}>
+                    <ArtworkCard
+                      artwork={artwork}
+                      to={`/artwork/${artwork.id}?fromPage=${currentPage}`}
+                      priority={index < 2}
+                      onZoom={
+                        artwork.imageUrl
+                          ? () => {
+                              const slide = lightboxSources.indexOf(artwork.imageUrl);
+                              if (slide !== -1) openLightboxOnSlide(slide + 1);
+                            }
+                          : undefined
+                      }
+                    />
+                  </Reveal>
                 </div>
-              )}
-            </>
+              ))}
+            </div>
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="shell mt-[var(--space-section)]">
+              <div className="flex items-center justify-between gap-4 border-t border-rule pt-8">
+                <Button
+                  onClick={handlePrevPage}
+                  disabled={currentPage === 1}
+                  variant="ghost"
+                  className="pressable text-meta h-auto rounded-none px-0 font-normal text-ink hover:bg-transparent hover:text-ink-soft disabled:opacity-30"
+                >
+                  <ArrowLeft className="size-4" />
+                  이전 페이지
+                </Button>
+
+                <p className="font-serif text-lg text-ink-soft tabular-nums">
+                  <span className="text-ink">
+                    {String(currentPage).padStart(2, '0')}
+                  </span>
+                  <span className="mx-2 text-ink-faint">/</span>
+                  {String(totalPages).padStart(2, '0')}
+                </p>
+
+                <Button
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  variant="ghost"
+                  className="pressable text-meta h-auto rounded-none px-0 font-normal text-ink hover:bg-transparent hover:text-ink-soft disabled:opacity-30"
+                >
+                  다음 페이지
+                  <ArrowRight className="size-4" />
+                </Button>
+              </div>
+            </div>
           )}
-        </div>
-      </section>
+        </>
+      )}
 
       {/* Lightbox */}
       <FsLightbox
         toggler={lightboxController.toggler}
-        sources={artworks.filter(artwork => artwork.imageUrl).map(artwork => artwork.imageUrl)}
+        sources={lightboxSources}
         slide={lightboxController.slide}
         type="image"
       />
