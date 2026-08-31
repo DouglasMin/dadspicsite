@@ -13,7 +13,7 @@ import { LocationPicker } from '@/components/LocationPicker';
 import { getIdToken } from '@/lib/auth';
 import { api, type Exhibition, type Artwork } from '@/lib/api';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
-import { ArrowLeft, Plus, Edit, Trash2, Calendar, Loader2, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Plus, Edit, Trash2, Calendar, Loader2, Image as ImageIcon, X } from 'lucide-react';
 
 export function ExhibitionManagement() {
   const navigate = useNavigate();
@@ -30,9 +30,12 @@ export function ExhibitionManagement() {
     endDate: '',
     location: '',
     imageUrl: '',
+    relatedLink: '',
+    photoUrls: [] as string[],
     artworkIds: [] as string[]
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -78,7 +81,7 @@ export function ExhibitionManagement() {
 
     setUploading(true);
     try {
-      const result = await api.uploadImage(imageFile);
+      const result = await api.uploadImage(imageFile, 'exhibitions');
       return result.imageUrl;
     } catch (error) {
       console.error('이미지 업로드 실패:', error);
@@ -86,6 +89,39 @@ export function ExhibitionManagement() {
     } finally {
       setUploading(false);
     }
+  };
+
+  const handlePhotoUpload = async () => {
+    if (photoFiles.length === 0) return [];
+
+    setUploading(true);
+    try {
+      const results = await Promise.all(
+        photoFiles.map((file) => api.uploadImage(file, 'exhibitions'))
+      );
+      return results.map((result) => result.imageUrl);
+    } catch (error) {
+      console.error('관련 사진 업로드 실패:', error);
+      throw error;
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handlePhotoFilesSelect = (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setPhotoFiles((prev) => [...prev, ...Array.from(files)]);
+  };
+
+  const removePendingPhoto = (index: number) => {
+    setPhotoFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removeUploadedPhoto = (url: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      photoUrls: prev.photoUrls.filter((photoUrl) => photoUrl !== url)
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -100,9 +136,15 @@ export function ExhibitionManagement() {
         imageUrl = await handleImageUpload();
       }
 
+      // 새로 선택한 관련 사진을 업로드해 기존 목록 뒤에 추가
+      const newPhotoUrls = await handlePhotoUpload();
+      const photoUrls = [...formData.photoUrls, ...newPhotoUrls];
+
       const exhibitionData = {
         ...formData,
-        imageUrl
+        imageUrl,
+        photoUrls,
+        relatedLink: formData.relatedLink.trim()
       };
 
       if (editingExhibition) {
@@ -131,9 +173,12 @@ export function ExhibitionManagement() {
       endDate: exhibition.endDate.split('T')[0],
       location: exhibition.location,
       imageUrl: exhibition.imageUrl || '',
+      relatedLink: exhibition.relatedLink || '',
+      photoUrls: exhibition.photoUrls || [],
       artworkIds: exhibition.artworkIds || []
     });
     setImageFile(null);
+    setPhotoFiles([]);
     setIsDialogOpen(true);
   };
 
@@ -166,10 +211,13 @@ export function ExhibitionManagement() {
       endDate: '',
       location: '',
       imageUrl: '',
+      relatedLink: '',
+      photoUrls: [],
       artworkIds: []
     });
     setEditingExhibition(null);
     setImageFile(null);
+    setPhotoFiles([]);
   };
 
   const getExhibitionStatus = (startDate: string, endDate: string) => {
@@ -311,6 +359,23 @@ export function ExhibitionManagement() {
                 />
 
                 <div className="space-y-3">
+                  <Label htmlFor="relatedLink" className="text-xs font-light tracking-wide uppercase text-neutral-500">
+                    관련 링크
+                  </Label>
+                  <Input
+                    id="relatedLink"
+                    type="url"
+                    value={formData.relatedLink}
+                    onChange={(e) => setFormData({ ...formData, relatedLink: e.target.value })}
+                    className="h-12 border-neutral-300 bg-white font-light focus:border-neutral-900 focus:ring-0"
+                    placeholder="https://example.com/exhibition"
+                  />
+                  <p className="text-xs text-neutral-500">
+                    전시회 예매 페이지나 관련 기사 주소를 입력하면 관람객이 상세 페이지에서 바로 이동할 수 있습니다.
+                  </p>
+                </div>
+
+                <div className="space-y-3">
                   <Label htmlFor="image" className="text-xs font-light tracking-wide uppercase text-neutral-500">
                     전시회 포스터 이미지
                   </Label>
@@ -336,6 +401,68 @@ export function ExhibitionManagement() {
                       </div>
                     )}
                   </div>
+                </div>
+
+                <div className="space-y-3">
+                  <Label htmlFor="photos" className="text-xs font-light tracking-wide uppercase text-neutral-500">
+                    전시회 관련 사진
+                  </Label>
+                  <Input
+                    id="photos"
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) => {
+                      handlePhotoFilesSelect(e.target.files);
+                      e.target.value = '';
+                    }}
+                    className="h-12 border-neutral-300 bg-white font-light focus:border-neutral-900 focus:ring-0 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-light file:bg-neutral-100 file:text-neutral-700 hover:file:bg-neutral-200"
+                  />
+                  <p className="text-xs text-neutral-500">
+                    여러 장을 한 번에 선택할 수 있습니다. 저장할 때 업로드됩니다.
+                  </p>
+
+                  {(formData.photoUrls.length > 0 || photoFiles.length > 0) && (
+                    <div className="grid grid-cols-3 md:grid-cols-5 gap-3 pt-2">
+                      {formData.photoUrls.map((url) => (
+                        <div key={url} className="relative group">
+                          <img
+                            src={url}
+                            alt="전시회 관련 사진"
+                            className="aspect-square w-full object-cover rounded-lg border border-neutral-200"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeUploadedPhoto(url)}
+                            aria-label="사진 삭제"
+                            className="absolute top-1 right-1 h-6 w-6 rounded-full bg-neutral-900/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                      ))}
+                      {photoFiles.map((file, index) => (
+                        <div key={`${file.name}-${index}`} className="relative group">
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt={file.name}
+                            className="aspect-square w-full object-cover rounded-lg border border-dashed border-neutral-400"
+                          />
+                          <span className="absolute bottom-1 left-1 px-1.5 py-0.5 bg-white/90 text-[10px] text-neutral-600 rounded">
+                            업로드 대기
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => removePendingPhoto(index)}
+                            aria-label="선택 취소"
+                            className="absolute top-1 right-1 h-6 w-6 rounded-full bg-neutral-900/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-3">

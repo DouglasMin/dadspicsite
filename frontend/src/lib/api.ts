@@ -20,10 +20,14 @@ export interface Exhibition {
   endDate: string;
   location: string;
   imageUrl?: string;
+  relatedLink?: string;
+  photoUrls?: string[];
   artworkIds: string[];
   createdAt: string;
   updatedAt: string;
 }
+
+export type UploadFolder = 'artworks' | 'exhibitions';
 
 export interface ContactFormData {
   name: string;
@@ -154,10 +158,10 @@ class ApiClient {
   }
 
   // Get presigned URL for image upload
-  async getPresignedUrl(fileName: string, fileType: string, fileSize: number): Promise<{ presignedUrl: string; imageUrl: string; key: string }> {
+  async getPresignedUrl(fileName: string, fileType: string, fileSize: number, folder?: UploadFolder): Promise<{ presignedUrl: string; imageUrl: string; key: string }> {
     return this.request('/upload', {
       method: 'POST',
-      body: JSON.stringify({ fileName, fileType, fileSize }),
+      body: JSON.stringify({ fileName, fileType, fileSize, folder }),
     });
   }
 
@@ -182,12 +186,13 @@ class ApiClient {
   }
 
   // Complete image upload process
-  async uploadImage(file: File): Promise<{ imageUrl: string }> {
+  async uploadImage(file: File, folder?: UploadFolder): Promise<{ imageUrl: string }> {
     // Step 1: Get presigned URL
     const { presignedUrl, imageUrl } = await this.getPresignedUrl(
       file.name,
       file.type,
-      file.size
+      file.size,
+      folder
     );
 
     // Step 2: Upload directly to S3

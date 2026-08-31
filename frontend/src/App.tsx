@@ -4,6 +4,7 @@ import { Home } from '@/pages/Home';
 import { Gallery } from '@/pages/Gallery';
 import { ArtworkDetail } from '@/pages/ArtworkDetail';
 import { Exhibitions } from '@/pages/Exhibitions';
+import { ExhibitionDetail } from '@/pages/ExhibitionDetail';
 import { Contact } from '@/pages/Contact';
 import { Login } from '@/pages/Login';
 import { Admin } from '@/pages/Admin';
@@ -19,6 +20,7 @@ function App() {
           <Route path="gallery" element={<Gallery />} />
           <Route path="artwork/:id" element={<ArtworkDetail />} />
           <Route path="exhibitions" element={<Exhibitions />} />
+          <Route path="exhibitions/:id" element={<ExhibitionDetail />} />
           <Route path="contact" element={<Contact />} />
         </Route>
         {/* Auth routes without Layout */}

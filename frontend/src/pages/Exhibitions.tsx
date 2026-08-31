@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { api, type Exhibition } from '@/lib/api';
-import { Loader2, Calendar, MapPin, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Calendar, MapPin, Image as ImageIcon, ArrowRight } from 'lucide-react';
 
 export function Exhibitions() {
   const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
@@ -193,11 +194,14 @@ function ExhibitionCard({
         {/* Image */}
         <div className="relative order-1">
           {exhibition.imageUrl ? (
-            <div className="relative aspect-[4/3] overflow-hidden bg-neutral-100 flex items-center justify-center">
+            <Link
+              to={`/exhibitions/${exhibition.id}`}
+              className="relative aspect-[4/3] overflow-hidden bg-neutral-100 flex items-center justify-center group"
+            >
               <img
                 src={exhibition.imageUrl}
                 alt={exhibition.title}
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
               />
               
               {/* Status badge */}
@@ -222,11 +226,14 @@ function ExhibitionCard({
                   </div>
                 </div>
               )}
-            </div>
+            </Link>
           ) : (
-            <div className="aspect-[4/3] bg-neutral-100 flex items-center justify-center">
+            <Link
+              to={`/exhibitions/${exhibition.id}`}
+              className="aspect-[4/3] bg-neutral-100 flex items-center justify-center"
+            >
               <ImageIcon className="size-12 text-neutral-300" />
-            </div>
+            </Link>
           )}
         </div>
 
@@ -235,7 +242,12 @@ function ExhibitionCard({
           <div className="space-y-4 md:space-y-6">
             <div>
               <h3 className="text-2xl sm:text-3xl md:text-4xl font-light text-neutral-900 leading-tight mb-3 md:mb-4">
-                {exhibition.title}
+                <Link
+                  to={`/exhibitions/${exhibition.id}`}
+                  className="transition-colors hover:text-neutral-500"
+                >
+                  {exhibition.title}
+                </Link>
               </h3>
               <div className="w-12 md:w-16 h-px bg-neutral-300 mb-4 md:mb-6" />
             </div>
@@ -286,14 +298,21 @@ function ExhibitionCard({
             </p>
           </div>
 
-          {/* Artwork count */}
-          {exhibition.artworkIds && exhibition.artworkIds.length > 0 && (
-            <div className="pt-4 border-t border-neutral-200">
-              <p className="text-sm text-neutral-500 font-light">
-                {exhibition.artworkIds.length}점의 작품 전시
-              </p>
-            </div>
-          )}
+          {/* Artwork count & detail link */}
+          <div className="pt-4 border-t border-neutral-200 flex items-center justify-between gap-4">
+            <p className="text-sm text-neutral-500 font-light">
+              {exhibition.artworkIds && exhibition.artworkIds.length > 0
+                ? `${exhibition.artworkIds.length}점의 작품 전시`
+                : ''}
+            </p>
+            <Link
+              to={`/exhibitions/${exhibition.id}`}
+              className="group inline-flex items-center gap-2 text-sm font-light text-neutral-900 hover:text-neutral-500 transition-colors shrink-0"
+            >
+              자세히 보기
+              <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </div>
         </div>
       </div>
     </div>
